@@ -1,4 +1,4 @@
-package dev.fnc314.gradle.plugins.settings.settingssubsystemgradlesettingsplugin
+package dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
@@ -8,16 +8,20 @@ import java.io.File
  * Settings convention plugin orchestrating workspace root discovery,
  * repository defaults, catalog loading, and tool build inclusion.
  */
-public class SettingsSubsystemGradleSettingsPlugin : Plugin<Settings> {
+public class VersionCatalogBuilderGradleSettingsPlugin : Plugin<Settings> {
   override fun apply(settings: Settings) {
     val extension = settings.extensions.create(
-      "subsystemSettings",
-      SettingsSubsystemGradleSettingsExtension::class.java,
+      "versionCatalogBuilder",
+      VersionCatalogBuilderGradleSettingsExtension::class.java,
     )
 
-    // Also register alias settingsSubsystem for convention alignment
+    // Register aliases for DSL flexibility and backwards compatibility
     settings.extensions.add(
-      "settingsSubsystem",
+      "versionCatalogs",
+      extension,
+    )
+    settings.extensions.add(
+      "subsystemSettings",
       extension,
     )
 

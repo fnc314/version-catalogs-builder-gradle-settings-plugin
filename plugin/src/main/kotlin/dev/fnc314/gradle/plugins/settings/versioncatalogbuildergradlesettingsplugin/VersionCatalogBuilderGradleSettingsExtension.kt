@@ -1,11 +1,11 @@
-package dev.fnc314.gradle.plugins.settings.settingssubsystemgradlesettingsplugin
+package dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin
 
 import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import javax.inject.Inject
 
-public open class SettingsSubsystemGradleSettingsExtension @Inject constructor(
+public open class VersionCatalogBuilderGradleSettingsExtension @Inject constructor(
   objects: ObjectFactory,
 ) {
   /**
@@ -15,7 +15,7 @@ public open class SettingsSubsystemGradleSettingsExtension @Inject constructor(
    * 1. GRADLE_DOCS_ROOT env var
    * 2. WORKSPACE_ROOT env var
    * 3. Upward filesystem search for gradle/wrapper/gradle-wrapper.properties
-   * 4. Upward filesystem search for settings.gradle / settings.gradle.kts
+   * 4. Upward filesystem search for settings.gradle / settings.gradle.kts or .git
    */
   public val projectRoot: DirectoryProperty = objects.directoryProperty()
 

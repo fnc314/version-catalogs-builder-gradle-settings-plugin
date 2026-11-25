@@ -60,4 +60,4 @@ echo "Pushing tag $TAG to origin (force to update if exists)..."
 git push -f origin "$TAG"
 
 echo "Done! GitHub Actions release workflow triggered for $TAG."
-echo "Monitor workflow at: https://github.com/fnc314/settings-subsystem-gradle-settings-plugin/actions"
+echo "Monitor workflow at: https://github.com/fnc314/version-catalog-builder-gradle-settings-plugin/actions"

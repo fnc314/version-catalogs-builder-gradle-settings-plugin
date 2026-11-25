@@ -1,9 +1,9 @@
-# Settings Subsystem Gradle Settings Plugin
+# Version Catalog Builder Gradle Settings Plugin
 
-Convention settings plugin for multi-subsystem Gradle builds.
+Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
-[![CI](https://github.com/fnc314/settings-subsystem-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/settings-subsystem-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/fnc314/settings-subsystem-gradle-settings-plugin/releases)
+[![CI](https://github.com/fnc314/version-catalog-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalog-builder-gradle-settings-plugin/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/fnc314/version-catalog-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
@@ -19,7 +19,7 @@ When building multi-composite or multi-repo Gradle architectures, sub-builds oft
 ```kotlin
 // settings.gradle.kts
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.settings-subsystem-gradle-settings-plugin") version "1.0.0"
+    id("dev.fnc314.gradle.plugins.settings.version-catalog-builder-gradle-settings-plugin") version "1.0.0"
 }
 ```
 
@@ -27,14 +27,14 @@ Or with a Version Catalog:
 
 ```toml
 [plugins]
-settings-subsystem = { id = "dev.fnc314.gradle.plugins.settings.settings-subsystem-gradle-settings-plugin", version = "1.0.0" }
+version-catalog-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalog-builder-gradle-settings-plugin", version = "1.0.0" }
 ```
 
 ## Usage
 
 ```kotlin
 // settings.gradle.kts
-subsystemSettings {
+versionCatalogBuilder {
     // Optional override. By default, auto-resolved via:
     // 1. GRADLE_DOCS_ROOT environment variable
     // 2. WORKSPACE_ROOT environment variable

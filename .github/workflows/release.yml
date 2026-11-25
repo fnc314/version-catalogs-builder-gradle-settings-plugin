@@ -67,7 +67,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Publish Maven artifacts to GitHub Packages
-        run: ./gradlew :settings-subsystem-gradle-settings-plugin:publishGprPublicationToGitHubPackagesRepository
+        run: ./gradlew :version-catalog-builder-gradle-settings-plugin:publishGprPublicationToGitHubPackagesRepository
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +97,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Publish Plugin to Gradle Plugin Portal
-        run: ./gradlew :settings-subsystem-gradle-settings-plugin:publishPlugins
+        run: ./gradlew :version-catalog-builder-gradle-settings-plugin:publishPlugins
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
@@ -126,7 +126,7 @@ jobs:
           gradle-version: wrapper
 
       - name: Generate versioned Dokka documentation
-        run: ./gradlew :settings-subsystem-gradle-settings-plugin:dokkaVersion :settings-subsystem-gradle-settings-plugin:dokkaCapture
+        run: ./gradlew :version-catalog-builder-gradle-settings-plugin:dokkaVersion :version-catalog-builder-gradle-settings-plugin:dokkaCapture
 
       - name: Setup Pages
         uses: actions/configure-pages@v6

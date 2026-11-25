@@ -25,7 +25,7 @@
   ]
 
 [plugins]
-  project = { id = "dev.fnc314.gradle.plugins.settings.settings-subsystem-gradle-settings-plugin", version.ref = "project" }
+  project = { id = "dev.fnc314.gradle.plugins.settings.version-catalog-builder-gradle-settings-plugin", version.ref = "project" }
   kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
   gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
   dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
