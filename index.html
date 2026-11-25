@@ -429,10 +429,13 @@ versionCatalogBuilder {
     // projectRoot.set(file("/path/to/root"))
 
     catalogs {
-        // Automatically registers gradle/libs.versions.toml, gradle/local.versions.toml, etc.
+        // Abbreviated syntax: automatically maps to gradle/name.versions.toml
         register("libs")
-        register("local")
         register("tools")
+
+        // Long-form syntax: custom relative path from projectRoot
+        register("local", "gradle/local.versions.toml")
+        register("customCatalog", "config/catalogs/custom.versions.toml")
     }
 
     toolBuilds {

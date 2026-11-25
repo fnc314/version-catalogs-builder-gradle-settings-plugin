@@ -44,11 +44,15 @@ versionCatalogBuilder {
     catalogs {
         // Abbreviated syntax: register("name") implicitly maps to "gradle/name.versions.toml"
         register("libs")
-        register("local")
         register("tools")
+
+        // Long-form syntax: register("name", "relativePath") explicitly maps to a custom relative file path
+        register("local", "gradle/local.versions.toml")
+        register("customCatalog", "config/catalogs/custom.versions.toml")
     }
 
     toolBuilds {
+        // Includes composite builds relative to projectRoot
         include("gradle/tools/plugins-projects")
         include("gradle/tools/plugins-docs")
     }
