@@ -1,0 +1,5 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin/VersionCatalogBuilderGradleSettingsExtension.CatalogsDsl///PointingToDeclaration/dev/fnc314/gradle/plugins/settings/versioncatalogbuildergradlesettingsplugin/VersionCatalogBuilderGradleSettingsExtension.CatalogsDsl.html
+$dokka.location:dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin/VersionCatalogBuilderGradleSettingsExtension.ToolBuildsDsl///PointingToDeclaration/dev/fnc314/gradle/plugins/settings/versioncatalogbuildergradlesettingsplugin/VersionCatalogBuilderGradleSettingsExtension.ToolBuildsDsl.html
+dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin

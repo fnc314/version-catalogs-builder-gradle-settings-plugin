@@ -15,7 +15,7 @@ plugins {
   id("org.gradle.toolchains.foojay-resolver-convention") version("1.0.0")
 }
 
-rootProject.name = "version-catalog-builder-gradle-settings-plugin-root"
+rootProject.name = "version-catalogs-builder-gradle-settings-plugin-root"
 
 include(":plugin")
-project(":plugin").name = "version-catalog-builder-gradle-settings-plugin"
+project(":plugin").name = "version-catalogs-builder-gradle-settings-plugin"

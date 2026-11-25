@@ -1,4 +1,4 @@
-# Module version-catalog-builder-gradle-settings-plugin
+# Module version-catalogs-builder-gradle-settings-plugin
 
 ## About
 
@@ -13,14 +13,14 @@ See how to declare a dependency upon the plugin and consume/apply it.
 The plugin is applied in `settings.gradle[.kts]` files
 ```gradle
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalog-builder-gradle-settings-plugin") version("$latest_version")
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version("$latest_version")
 }
 ```
 
 ## Source
 
-The source code is available [on `GitHub`](https://github.com/fnc314/version-catalog-builder-gradle-settings-plugin).
+The source code is available [on `GitHub`](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin).
 
-# Package dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin
+# Package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsplugin
 
 Settings convention plugin for multi-project Gradle builds and version catalog builder orchestration.

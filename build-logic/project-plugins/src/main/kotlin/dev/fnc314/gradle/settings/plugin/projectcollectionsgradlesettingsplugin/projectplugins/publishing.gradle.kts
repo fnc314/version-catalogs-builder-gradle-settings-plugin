@@ -32,12 +32,12 @@ gradlePlugin {
   vcsUrl = "https://github.com/fnc314/${project.name}"
   isAutomatedPublishing = true
   // Define the plugin
-  plugins.create("versionCatalogBuilderGradleSettingsPlugin") {
+  plugins.create("versionCatalogsBuilderGradleSettingsPlugin") {
     id = "dev.fnc314.gradle.plugins.settings.${project.name}"
-    implementationClass = "dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin.VersionCatalogBuilderGradleSettingsPlugin"
-    tags = listOf("gradle.settings", "settings.plugin", "version-catalog-builder", "catalogs")
+    implementationClass = "dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsplugin.VersionCatalogsBuilderGradleSettingsPlugin"
+    tags = listOf("gradle.settings", "settings.plugin", "version-catalogs-builder", "catalogs")
     description = "Settings convention plugin orchestrating workspace root discovery, catalog loading, and tool build inclusion"
-    displayName = "version-catalog-builder-gradle-settings-plugin"
+    displayName = "version-catalogs-builder-gradle-settings-plugin"
     compatibility {
       features {
         configurationCache = true

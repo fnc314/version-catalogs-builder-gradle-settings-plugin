@@ -1,0 +1,1 @@
+var packageSearchIndex = [{"l":"dev.fnc314.gradle.plugins.settings.versioncatalogbuildergradlesettingsplugin","url":"dev/fnc314/gradle/plugins/settings/versioncatalogbuildergradlesettingsplugin/package-summary.html"}, {"l":"All packages","url":"index.html"}]
