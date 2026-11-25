@@ -15,16 +15,6 @@ public class VersionCatalogBuilderGradleSettingsPlugin : Plugin<Settings> {
       VersionCatalogBuilderGradleSettingsExtension::class.java,
     )
 
-    // Register aliases for DSL flexibility and backwards compatibility
-    settings.extensions.add(
-      "versionCatalogs",
-      extension,
-    )
-    settings.extensions.add(
-      "subsystemSettings",
-      extension,
-    )
-
     // Resolve projectRoot
     val resolvedRoot: File = resolveRoot(settings)
     extension.projectRoot.convention(settings.layout.settingsDirectory.dir(resolvedRoot.absolutePath))

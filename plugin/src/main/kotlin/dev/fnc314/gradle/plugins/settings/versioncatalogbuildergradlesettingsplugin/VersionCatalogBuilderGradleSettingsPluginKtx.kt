@@ -7,9 +7,3 @@ import org.gradle.api.initialization.Settings
  */
 public val Settings.versionCatalogBuilder: VersionCatalogBuilderGradleSettingsExtension
   get() = extensions.getByType(VersionCatalogBuilderGradleSettingsExtension::class.java)
-
-public val Settings.versionCatalogs: VersionCatalogBuilderGradleSettingsExtension
-  get() = extensions.getByType(VersionCatalogBuilderGradleSettingsExtension::class.java)
-
-public val Settings.subsystemSettings: VersionCatalogBuilderGradleSettingsExtension
-  get() = extensions.getByType(VersionCatalogBuilderGradleSettingsExtension::class.java)
