@@ -1,1 +1,1 @@
-var moduleSearchIndex = [{"l":"version-catalog-builder-gradle-settings-plugin","url":"index.html"}]
+var moduleSearchIndex = [{"l":"version-catalogs-builder-gradle-settings-plugin","url":"index.html"}]

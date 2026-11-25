@@ -3,7 +3,7 @@ package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsp
 import org.gradle.api.initialization.Settings
 
 /**
- * Accessor for [VersionCatalogsBuilderGradleSettingsExtension] on [Settings].
+ * Type-safe accessor for [VersionCatalogsBuilderGradleSettingsExtension] on Gradle [Settings].
  */
 public val Settings.versionCatalogsBuilder: VersionCatalogsBuilderGradleSettingsExtension
   get() = extensions.getByType(VersionCatalogsBuilderGradleSettingsExtension::class.java)

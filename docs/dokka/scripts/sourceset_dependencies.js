@@ -1,1 +1,1 @@
-sourceset_dependencies='{":version-catalog-builder-gradle-settings-plugin/main":[]}'
+sourceset_dependencies='{":version-catalogs-builder-gradle-settings-plugin/main":[]}'

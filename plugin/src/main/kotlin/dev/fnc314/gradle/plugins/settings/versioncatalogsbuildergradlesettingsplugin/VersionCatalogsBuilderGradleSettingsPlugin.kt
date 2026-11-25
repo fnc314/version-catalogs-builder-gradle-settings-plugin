@@ -9,6 +9,15 @@ import java.io.File
  * repository defaults, catalog loading, and tool build inclusion.
  */
 public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
+  /**
+   * Applies the version catalogs builder plugin to the given [Settings] target.
+   *
+   * Configures repository defaults, enables type-safe project accessors,
+   * registers the `versionCatalogsBuilder` extension, and schedules version
+   * catalog registration and tool build inclusion on settings evaluation.
+   *
+   * @param settings The Gradle [Settings] instance being configured.
+   */
   override fun apply(settings: Settings) {
     val extension = settings.extensions.create(
       "versionCatalogsBuilder",
