@@ -4,6 +4,9 @@
 
 When applied to a `settings.gradle[.kts]` file, this `org.gradle.api.Plugin` orchestrates workspace root discovery, repository defaults, version catalog loading, and tool build inclusion for multi-project or multi-composite Gradle builds.
 
+### Adopted in Production
+This plugin is actively utilized in [`ai-job-tracker`](https://github.com/fnc314/ai-job-tracker) to orchestrate multi-project version catalogs and composite build tools across its Kotlin and Gradle sub-builds.
+
 ## Setup
 
 ### Plugin Application
@@ -12,7 +15,7 @@ The plugin is applied in `settings.gradle[.kts]`:
 
 ```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.1.0"
 }
 ```
 
@@ -20,7 +23,7 @@ Or via a Version Catalog (`libs.versions.toml`):
 
 ```toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.3" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.1.0" }
 ```
 
 ```kotlin

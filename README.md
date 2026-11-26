@@ -3,7 +3,7 @@
 Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
 [![CI](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.0.3-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
@@ -14,12 +14,15 @@ When building multi-composite or multi-repo Gradle architectures, sub-builds oft
 3. Loading of requested Version Catalogs into `dependencyResolutionManagement`.
 4. Inclusion of shared tool builds into `pluginManagement`.
 
+### Adopted in Production
+This plugin is actively used in [`ai-job-tracker`](https://github.com/fnc314/ai-job-tracker) to orchestrate multi-project version catalogs and composite build tooling across its CLI, plugin ecosystem, and agent pipelines.
+
 ## Setup
 
 ```kotlin
 // settings.gradle.kts
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.1.0"
 }
 ```
 
@@ -27,7 +30,7 @@ Or with a Version Catalog:
 
 ```toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.3" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.1.0" }
 ```
 
 ## Usage
