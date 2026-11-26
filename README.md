@@ -3,7 +3,7 @@
 Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
 [![CI](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
+[![Version](https://img.shields.io/badge/version-2.0.3-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
@@ -19,7 +19,7 @@ When building multi-composite or multi-repo Gradle architectures, sub-builds oft
 ```kotlin
 // settings.gradle.kts
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "1.0.0"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
 }
 ```
 
@@ -27,7 +27,7 @@ Or with a Version Catalog:
 
 ```toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "1.0.0" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.3" }
 ```
 
 ## Usage
@@ -36,7 +36,7 @@ version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-ca
 // settings.gradle.kts
 versionCatalogsBuilder {
     // Optional override. By default, auto-resolved via:
-    // 1. GRADLE_DOCS_ROOT environment variable
+    // 1. VERSION_CATALOGS_BUILDER_ROOT environment variable
     // 2. WORKSPACE_ROOT environment variable
     // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     // projectRoot.set(file("/path/to/root"))
@@ -61,8 +61,8 @@ versionCatalogsBuilder {
 
 ## Environment Variables
 
-- `GRADLE_DOCS_ROOT`: Primary path override for standalone extraction and documentation pipelines.
-- `WORKSPACE_ROOT`: Standard continuous integration workspace path override.
+- `VERSION_CATALOGS_BUILDER_ROOT`: Dedicated path override for standalone extraction, isolated tool builds, and custom project root targets.
+- `WORKSPACE_ROOT`: Standard continuous integration and monorepo workspace path override.
 
 ## License
 

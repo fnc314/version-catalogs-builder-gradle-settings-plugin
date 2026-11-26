@@ -74,18 +74,23 @@ public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
   }
 
   private fun resolveRoot(settings: Settings): File {
-    System.getenv("GRADLE_DOCS_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
+    // 1. Specific plugin root override
+    System.getenv("VERSION_CATALOGS_BUILDER_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
+
+    // 2. Continuous integration / monorepo workspace override
     System.getenv("WORKSPACE_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
 
-    // Upwards search for gradle/wrapper/gradle-wrapper.properties or .git
+    // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     var current: File? = settings.settingsDir
     while (current != null) {
       if (File(current, "gradle/wrapper/gradle-wrapper.properties").exists() || File(current, ".git").exists()) {
         return current
       }
-      current = current.parentFile
+      val parent = current.parentFile ?: break
+      current = parent
     }
 
-    return settings.settingsDir.parentFile ?: settings.settingsDir
+    // 4. Fallback to settings directory parent (if exists) or current directory
+    return current ?: settings.settingsDir
   }
 }

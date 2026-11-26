@@ -12,7 +12,7 @@ The plugin is applied in `settings.gradle[.kts]`:
 
 ```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.2"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
 }
 ```
 
@@ -20,7 +20,7 @@ Or via a Version Catalog (`libs.versions.toml`):
 
 ```toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.2" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.3" }
 ```
 
 ```kotlin
@@ -38,7 +38,7 @@ Configure the plugin in `settings.gradle[.kts]` via the `versionCatalogsBuilder`
 // settings.gradle.kts
 versionCatalogsBuilder {
     // Optional override. By default, auto-resolved via:
-    // 1. GRADLE_DOCS_ROOT environment variable
+    // 1. VERSION_CATALOGS_BUILDER_ROOT environment variable
     // 2. WORKSPACE_ROOT environment variable
     // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     // projectRoot.set(file("/path/to/root"))
@@ -63,8 +63,8 @@ versionCatalogsBuilder {
 
 ## Environment Variables
 
-- `GRADLE_DOCS_ROOT`: Primary path override for standalone extraction and documentation pipelines.
-- `WORKSPACE_ROOT`: Standard continuous integration workspace path override.
+- `VERSION_CATALOGS_BUILDER_ROOT`: Dedicated path override for standalone extraction, isolated tool builds, and custom project root targets.
+- `WORKSPACE_ROOT`: Standard continuous integration and monorepo workspace path override.
 
 ## Source
 
