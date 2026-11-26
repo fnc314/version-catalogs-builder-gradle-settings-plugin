@@ -44,9 +44,17 @@ CURRENT_TOML_VERSION=$(sed -n -E 's/^[[:space:]]*project[[:space:]]*=[[:space:]]
 LATEST_GIT_TAG=$(git tag -l "version/*" | tr -s '[:space:]' '\n' | sort -V | tail -n1 | sed 's|^version/||')
 
 if [[ -z "$VERSION" ]]; then
-  echo "Current libs.versions.toml version: ${CURRENT_TOML_VERSION:-None}"
-  echo "Current highest git tag: ${LATEST_GIT_TAG:-None}"
-  read -r "VERSION?Enter new version to release (e.g. 3.0.0): "
+  if [[ -n "$LATEST_GIT_TAG" ]] && git rev-parse "version/$LATEST_GIT_TAG" >/dev/null 2>&1; then
+    # Default to latest git tag if it exists locally, or prompt
+    echo "Current libs.versions.toml version: ${CURRENT_TOML_VERSION:-None}"
+    echo "Current highest git tag: ${LATEST_GIT_TAG:-None}"
+    read -r "VERSION?Enter version to release or push (default: ${LATEST_GIT_TAG}): "
+    VERSION="${VERSION:-$LATEST_GIT_TAG}"
+  else
+    echo "Current libs.versions.toml version: ${CURRENT_TOML_VERSION:-None}"
+    echo "Current highest git tag: ${LATEST_GIT_TAG:-None}"
+    read -r "VERSION?Enter new version to release (e.g. 3.0.0): "
+  fi
 fi
 
 VERSION="${VERSION#version/}"
@@ -59,9 +67,29 @@ fi
 
 TAG_NAME="version/$VERSION"
 
+# If tag already exists locally:
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-  echo "❌ Error: Git tag '$TAG_NAME' already exists." >&2
-  exit 1
+  # Check if remote already has this tag
+  REMOTE_TAG=$(git ls-remote --tags origin "refs/tags/$TAG_NAME" 2>/dev/null || true)
+  if [[ -n "$REMOTE_TAG" ]]; then
+    echo "❌ Error: Git tag '$TAG_NAME' already exists on remote origin." >&2
+    exit 1
+  fi
+
+  if [[ "$NO_PUSH" == true ]]; then
+    echo "ℹ️  Git tag '$TAG_NAME' already exists locally."
+    echo "Tag created locally (--no-push specified). Run without --no-push to push to remote:"
+    echo "   mise run release $VERSION"
+    exit 0
+  else
+    echo "ℹ️  Git tag '$TAG_NAME' exists locally but not on remote origin."
+    echo "Treating this invocation as the push path for '$TAG_NAME'..."
+    echo "Pushing '$BRANCH' and '$TAG_NAME' to origin..."
+    git push origin "$BRANCH"
+    git push origin "$TAG_NAME"
+    echo "✓ Pushed commit and tag to remote origin."
+    exit 0
+  fi
 fi
 
 # Ensure working tree is clean outside of version descriptor files
@@ -106,12 +134,11 @@ echo "✓ Created annotated tag: $TAG_NAME"
 if [[ "$NO_PUSH" == true ]]; then
   echo ""
   echo "Tag created locally (--no-push/--commit-only specified). When ready to publish:"
-  echo "   git push origin $BRANCH"
-  echo "   git push origin $TAG_NAME"
+  echo "   mise run release $VERSION"
+  echo "   (or: git push origin $BRANCH && git push origin $TAG_NAME)"
 else
   echo "Pushing '$BRANCH' and '$TAG_NAME' to origin..."
   git push origin "$BRANCH"
   git push origin "$TAG_NAME"
   echo "✓ Pushed commit and tag to remote origin."
-  echo "Monitor workflow at: https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions"
 fi
