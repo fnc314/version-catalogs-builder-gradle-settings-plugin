@@ -1,0 +1,5 @@
+[env]
+  # Scoped environment variable pointing to the monorepo root.
+  # This allows nested builds to resolve the workspace root without polluting global shell state.
+  VERSION_CATALOGS_BUILDER_ROOT = "{{config_root}}"
+  WORKSPACE_ROOT = "{{config_root}}"

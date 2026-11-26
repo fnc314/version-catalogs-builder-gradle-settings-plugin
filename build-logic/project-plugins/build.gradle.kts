@@ -31,6 +31,7 @@ dependencies {
   implementation(gradleApi())
   implementation(gradleKotlinDsl())
   implementation(projects.projectExtensions)
+  implementation(projects.generator)
   implementation(libs.kotlin.gradle.plugin)
   implementation(libs.publish.gradle.plugin)
   implementation(libs.bundles.dokka)

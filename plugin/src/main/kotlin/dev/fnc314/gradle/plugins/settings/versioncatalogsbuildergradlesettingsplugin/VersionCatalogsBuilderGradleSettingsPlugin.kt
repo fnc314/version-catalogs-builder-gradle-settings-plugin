@@ -64,9 +64,20 @@ public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
       for ((name, customPath) in extension.catalogsList) {
         val relPath = customPath ?: "gradle/$name.versions.toml"
         val catalogFile = File(rootDir, relPath)
-        if (catalogFile.exists() && settings.dependencyResolutionManagement.versionCatalogs.findByName(name) == null) {
-          settings.dependencyResolutionManagement.versionCatalogs.create(name) { catalog ->
-            catalog.from(catalogFile)
+        if (catalogFile.exists()) {
+          val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
+          if (name == "libs" && catalogFile.canonicalFile == defaultLibsFile.canonicalFile) {
+            // Default libs catalog is already automatically loaded by Gradle from settingsDir/gradle/libs.versions.toml
+            continue
+          }
+          val fileCollection = settings.layout.settingsDirectory.files(catalogFile)
+          val existing = settings.dependencyResolutionManagement.versionCatalogs.findByName(name)
+          if (existing != null) {
+            existing.from(fileCollection)
+          } else {
+            settings.dependencyResolutionManagement.versionCatalogs.create(name) { catalog ->
+              catalog.from(fileCollection)
+            }
           }
         }
       }

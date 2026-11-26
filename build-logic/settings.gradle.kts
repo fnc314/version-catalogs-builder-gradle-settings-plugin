@@ -18,7 +18,8 @@ plugins {
   id("org.gradle.toolchains.foojay-resolver-convention")
 }
 
-rootProject.name = "project-collections-gradle-settings-plugin-build-logic"
+rootProject.name = "version-catalogs-builder-gradle-settings-plugin-build-logic"
 
 include(":project-extensions")
 include(":project-plugins")
+include(":generator")

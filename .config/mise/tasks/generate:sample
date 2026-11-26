@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#MISE description="Generates a sample project using version-catalogs-builder generator"
+#USAGE arg "[sample_type]" help="Sample type: basic-multi-catalog, composite-tool-builds, or custom-root-monorepo" default="basic-multi-catalog"
+#USAGE arg "[destination]" help="Destination directory (optional)"
+
+set -euo pipefail
+
+SAMPLE_TYPE="${usage_sample_type:-basic-multi-catalog}"
+DESTINATION="${usage_destination:-}"
+
+if [[ -n "$DESTINATION" ]]; then
+  ./gradlew generateSample --sampleType="$SAMPLE_TYPE" --destinationDir="$DESTINATION"
+else
+  ./gradlew generateSample --sampleType="$SAMPLE_TYPE"
+fi

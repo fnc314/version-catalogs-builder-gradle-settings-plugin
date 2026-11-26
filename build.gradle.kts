@@ -11,5 +11,7 @@ plugins {
   alias(libs.plugins.autonomousapps.dependency.analysis) apply false
 }
 
+apply<dev.fnc314.gradle.generators.ProjectGeneratorsPlugin>()
+
 version = libs.versions.project.get()
 group = "dev.fnc314.gradle.plugins.settings"
