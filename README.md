@@ -15,10 +15,14 @@ It deliberately does **NOT** configure repository handlers, enable feature previ
 
 ### Key Capabilities
 
-1. **Automatic Root Discovery**: Discovers the workspace root by looking for `gradle/wrapper/gradle-wrapper.properties` or `.git`, with environment variable fallbacks (`VERSION_CATALOGS_BUILDER_ROOT`, `WORKSPACE_ROOT`).
-2. **Declarative Version Catalog Registration**: Register standard catalogs with a single line (`catalog("libs")`) or custom relative/explicit files (`catalog("tools", "gradle/tools.versions.toml")`).
-3. **Natural Gradle File Resolution**: Supports file notation (`String`, `File`, `Path`) passed through `Settings.file` resolution.
-4. **DSL Marker Safety**: Annotated with `@VersionCatalogsBuilderDsl` to prevent improper receiver scope leakage in Kotlin DSL settings scripts.
+1. **Automatic Root Discovery**: Discovers the workspace root by looking for `gradle/wrapper/gradle-wrapper.properties` or `.git`, with `gradle.properties` (`dev.fnc314.version-catalogs-builder.root`) and environment variable fallbacks (`VERSION_CATALOGS_BUILDER_ROOT`, `WORKSPACE_ROOT`).
+2. **Declarative Version Catalog Registration**:
+   - Convention by name: `catalog("libs")` (defaults to `gradle/libs.versions.toml`).
+   - Derived name from file notation: `catalog("gradle/network-tools.versions.toml")` (automatically registers accessor `networkTools`).
+   - Explicit name and notation: `catalog("tools", "gradle/tools.versions.toml")`.
+3. **Natural Gradle File Resolution**: Supports file notation (`String`, `File`, `Path`) passed through `Settings.file` resolution relative to `projectRoot`.
+4. **Configuration-Cache & DSL Safety**: Extension backed by configuration-cache-safe `MapProperty` and annotated with `@VersionCatalogsBuilderDsl` to prevent improper receiver scope leakage in Kotlin DSL settings scripts.
+5. **Gradle Problems API Diagnostics**: Emits rich, multi-line problem warnings when a catalog declaration is replaced, comparing prior and subsequent declarations via `replacedBy`.
 
 ## Setup
 
@@ -44,13 +48,17 @@ version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-ca
 // settings.gradle.kts
 versionCatalogsBuilder {
     // Optional workspace root override. By default, auto-resolved via:
-    // 1. VERSION_CATALOGS_BUILDER_ROOT environment variable
-    // 2. WORKSPACE_ROOT environment variable
-    // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
+    // 1. dev.fnc314.version-catalogs-builder.root in gradle.properties
+    // 2. VERSION_CATALOGS_BUILDER_ROOT environment variable
+    // 3. WORKSPACE_ROOT environment variable
+    // 4. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     // projectRoot.set(rootDir)
 
     // Implicit convention: resolves to $projectRoot/gradle/libs.versions.toml
     catalog("libs")
+
+    // Inferred name: derives catalog accessor "networkTools" from filename
+    catalog("gradle/network-tools.versions.toml")
 
     // Explicit relative path (resolved relative to projectRoot)
     catalog("tools", "gradle/tools.versions.toml")
@@ -60,9 +68,17 @@ versionCatalogsBuilder {
 }
 ```
 
-## Environment Variables
+## Configuration & Overrides
+
+### Gradle Properties (`gradle.properties`)
+
+- `dev.fnc314.version-catalogs-builder.root`: Explicit root path override.
+- `dev.fnc314.version-catalogs-builder.default-catalog-name`: Overrides default catalog name used for conflict detection with `gradle/libs.versions.toml` (defaults to `dependencyResolutionManagement.defaultLibrariesExtensionName` or `"libs"`).
+
+### Environment Variables
 
 - `VERSION_CATALOGS_BUILDER_ROOT`: Dedicated workspace root override for isolated tool builds, tests, or subprojects.
+- `VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME`: Environment variable override for the default catalog name.
 - `WORKSPACE_ROOT`: Standard continuous integration or monorepo workspace path override.
 
 ## License

@@ -1,8 +1,9 @@
 # Sample: Basic Multi-Catalog
 
 This sample demonstrates how to configure and resolve multiple version catalogs using `version-catalogs-builder-gradle-settings-plugin`:
-- **Abbreviated syntax**: `register("libs")` resolves automatically to `gradle/libs.versions.toml`.
-- **Explicit path syntax**: `register("tools", "gradle/tools.versions.toml")` resolves to a customized catalog file.
+- **Convention syntax**: `catalog("libs")` resolves automatically to `gradle/libs.versions.toml`.
+- **Derived name syntax**: `catalog("gradle/network-tools.versions.toml")` derives catalog accessor `networkTools`.
+- **Explicit path syntax**: `catalog("tools", "gradle/tools.versions.toml")` resolves to a customized catalog file.
 
 ## Project Structure
 

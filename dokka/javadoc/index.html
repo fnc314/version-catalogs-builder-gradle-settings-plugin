@@ -91,36 +91,33 @@ var pathtoroot = "";
     </div>
         <div class="header">
             <div class="subtitle">
-                <div class="block"><p>When applied to a <code>settings.gradle[.kts]</code> file, this <code>org.gradle.api.Plugin</code> orchestrates workspace root discovery, repository defaults, version catalog loading, and tool build inclusion for multi-project or multi-composite Gradle builds.</p><p>This plugin is actively utilized in <a href=https://github.com/fnc314/ai-job-tracker.html><code>ai-job-tracker</code></a> to orchestrate multi-project version catalogs and composite build tools across its Kotlin and Gradle sub-builds.</p><p>The plugin is applied in <code>settings.gradle[.kts]</code>:</p><pre><code>plugins {
-    id(&quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;) version &quot;2.1.0&quot;
+                <div class="block"><p>When applied to a <code>settings.gradle[.kts]</code> file, this <code>org.gradle.api.Plugin</code> orchestrates workspace root discovery and registers version catalogs into Gradle's <code>dependencyResolutionManagement</code> for multi-project or multi-composite Gradle builds.</p><p>The plugin focuses strictly on one single responsibility: building and registering version catalogs. It does not configure repositories, feature preview flags, or tool builds.</p><p>This plugin is actively utilized in <a href=https://github.com/fnc314/ai-job-tracker.html><code>ai-job-tracker</code></a> to orchestrate multi-project version catalogs across its Kotlin and Gradle sub-builds.</p><p>The plugin is applied in <code>settings.gradle[.kts]</code>:</p><pre><code>plugins {
+    id(&quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;) version &quot;3.0.0&quot;
 }</code></pre><p>Or via a Version Catalog (<code>libs.versions.toml</code>):</p><pre><code>[plugins]
-version-catalogs-builder = { id = &quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;, version = &quot;2.1.0&quot; }</code></pre><pre><code>// settings.gradle.kts
+version-catalogs-builder = { id = &quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;, version = &quot;3.0.0&quot; }</code></pre><pre><code>// settings.gradle.kts
 plugins {
     alias(libs.plugins.version.catalogs.builder)
 }</code></pre><p>Configure the plugin in <code>settings.gradle[.kts]</code> via the <code>versionCatalogsBuilder</code> block:</p><pre><code>// settings.gradle.kts
 versionCatalogsBuilder {
     // Optional override. By default, auto-resolved via:
-    // 1. VERSION_CATALOGS_BUILDER_ROOT environment variable
-    // 2. WORKSPACE_ROOT environment variable
-    // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
+    // 1. dev.fnc314.version-catalogs-builder.root in gradle.properties
+    // 2. VERSION_CATALOGS_BUILDER_ROOT environment variable
+    // 3. WORKSPACE_ROOT environment variable
+    // 4. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     // projectRoot.set(file(&quot;/path/to/root&quot;))
 
-    catalogs {
-        // Abbreviated syntax: register(&quot;name&quot;) implicitly maps to &quot;gradle/name.versions.toml&quot;
-        register(&quot;libs&quot;)
-        register(&quot;tools&quot;)
+    // Convention syntax: maps to &quot;gradle/libs.versions.toml&quot;
+    catalog(&quot;libs&quot;)
 
-        // Long-form syntax: register(&quot;name&quot;, &quot;relativePath&quot;) explicitly maps to a custom relative file path
-        register(&quot;local&quot;, &quot;gradle/local.versions.toml&quot;)
-        register(&quot;customCatalog&quot;, &quot;config/catalogs/custom.versions.toml&quot;)
-    }
+    // Inferred name syntax: derives accessor &quot;networkTools&quot; from the filename
+    catalog(&quot;gradle/network-tools.versions.toml&quot;)
 
-    toolBuilds {
-        // Includes composite builds relative to projectRoot
-        include(&quot;gradle/tools/plugins-projects&quot;)
-        include(&quot;gradle/tools/plugins-docs&quot;)
-    }
-}</code></pre><ul><li><p><code>VERSION_CATALOGS_BUILDER_ROOT</code>: Dedicated path override for standalone extraction, isolated tool builds, and custom project root targets.</p></li><li><p><code>WORKSPACE_ROOT</code>: Standard continuous integration and monorepo workspace path override.</p></li></ul><p>The source code is available on <a href=https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin.html>GitHub</a>.</p></div>
+    // Explicit path syntax: maps &quot;tools&quot; to a custom relative file path
+    catalog(&quot;tools&quot;, &quot;gradle/tools.versions.toml&quot;)
+
+    // File notation syntax:
+    catalog(&quot;custom&quot;, file(&quot;config/catalogs/custom.versions.toml&quot;))
+}</code></pre><ul><li><p><code>dev.fnc314.version-catalogs-builder.root</code>: Gradle property for workspace root path override.</p></li><li><p><code>dev.fnc314.version-catalogs-builder.default-catalog-name</code>: Gradle property for default catalog name override.</p></li><li><p><code>VERSION_CATALOGS_BUILDER_ROOT</code>: Dedicated path override for standalone extraction, isolated tool builds, and custom project root targets.</p></li><li><p><code>VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME</code>: Environment variable override for the default catalog name.</p></li><li><p><code>WORKSPACE_ROOT</code>: Standard continuous integration and monorepo workspace path override.</p></li></ul><p>The source code is available on <a href=https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin.html>GitHub</a>.</p></div>
             </div>
             <p>See: <a href="#overview_description">Description</a></p>
         </div>

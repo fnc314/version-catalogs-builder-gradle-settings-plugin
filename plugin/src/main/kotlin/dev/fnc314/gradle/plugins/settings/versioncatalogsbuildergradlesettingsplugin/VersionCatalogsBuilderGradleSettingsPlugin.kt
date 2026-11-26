@@ -13,6 +13,7 @@ import javax.inject.Inject
  *
  * @param problems Gradle [Problems] API service for diagnostic problem and warning reporting.
  */
+@Suppress("UnstableApiUsage")
 public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constructor(
   private val problems: Problems,
 ) : Plugin<Settings> {
