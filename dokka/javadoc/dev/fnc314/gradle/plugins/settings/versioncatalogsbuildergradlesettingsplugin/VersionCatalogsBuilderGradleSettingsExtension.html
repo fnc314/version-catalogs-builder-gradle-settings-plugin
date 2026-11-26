@@ -117,7 +117,7 @@ var pathtoroot = "../../../../../../";
 public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSettingsExtension.html>VersionCatalogsBuilderGradleSettingsExtension</a></span>
 
                     </pre>
-                    <div class="block"><p>Settings extension configuring workspace root directory and version catalog registrations for <a href=VersionCatalogsBuilderGradleSettingsPlugin.html>VersionCatalogsBuilderGradleSettingsPlugin</a>.</p><p>Backed by configuration-cache-compliant managed properties (<a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a> and <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalogs>catalogs</a>). Multiple calls registering the same catalog name will replace previous entries in <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalogs>catalogs</a> (retaining the last declared path) and emit an informational problem warning via <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/problems/Problems.html>Problems</a>.</p></div>
+                    <div class="block"><p>Settings extension configuring workspace root directory and version catalog registrations for <a href=VersionCatalogsBuilderGradleSettingsPlugin.html>VersionCatalogsBuilderGradleSettingsPlugin</a>.</p><p>Backed by configuration-cache-compliant managed properties (<a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a> and catalogs). Multiple calls registering the same catalog name will replace previous entries in catalogs (retaining the last declared path) and emit an informational problem warning via <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/problems/Problems.html>Problems</a>.</p></div>
 
                     <dl>
 
@@ -175,12 +175,6 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                         <tr class="altColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/file/DirectoryProperty.html>DirectoryProperty</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a></code></th>
-                                            <td class="colLast"></td>
-                                        </tr>
-                                        
-                                        <tr class="rowColor">
-                                            <td class="colFirst"><code>private final <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/provider/MapProperty.html>MapProperty</a>&lt;<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>&gt;</code></td>
-                                            <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalogs>catalogs</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
@@ -272,14 +266,6 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
-                                            <td class="colFirst"><code>final <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/provider/MapProperty.html>MapProperty</a>&lt;<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>&gt;</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#getCatalogs()>getCatalogs</a>() </code>
-                                            </th>
-                                            <td class="colLast">Managed map of registered version catalog names to their relative file paths or file notations.</td>
-                                        </tr>
-                                        
-                                        <tr id="i2" class="altColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>catalog</a>(<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a> name) </code>
@@ -287,12 +273,20 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                             <td class="colLast">Registers a version catalog by <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>name</a>, defaulting to <code>gradle/{name}.versions.toml</code> relative to <a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a>.</td>
                                         </tr>
                                         
-                                        <tr id="i3" class="rowColor">
+                                        <tr id="i2" class="altColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>catalog</a>(<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a> name, <a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html>Object</a> from) </code>
                                             </th>
                                             <td class="colLast">Registers a version catalog by <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>name</a> with an explicit <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>from</a> path or file reference.</td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.Object)>catalog</a>(<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html>Object</a> from) </code>
+                                            </th>
+                                            <td class="colLast">Registers a version catalog by inferring its accessor name directly from <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.Object)>from</a>.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -385,29 +379,6 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                     </li>
                                 </ul>
                                 
-                                <a id="getCatalogs()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getCatalogs</h4>
-                                        <pre class="methodSignature"> final <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/provider/MapProperty.html>MapProperty</a>&lt;<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a>&gt; <a href=VersionCatalogsBuilderGradleSettingsExtension.html#getCatalogs()>getCatalogs</a>()</pre>
-                                        <div class="block"><p>Managed map of registered version catalog names to their relative file paths or file notations.</p><p>An empty string value <code>&quot;&quot;</code> indicates the default catalog path (<code>gradle/{name}.versions.toml</code>).</p></div>
-
-                                        <dl>
-
-                                        
-
-                                        
-
-                                        
-
-                                        </dl>
-                                    </li>
-                                </ul>
-                                
                                 <a id="catalog(java.lang.String)">
                                     <!--   -->
                                 </a>
@@ -419,7 +390,7 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                         <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a> <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>catalog</a>(<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html>String</a> name)</pre>
                                         <div class="block"><p>Registers a version catalog by <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>name</a>, defaulting to <code>gradle/{name}.versions.toml</code> relative to <a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a>.</p><p>Example:</p><pre><code>versionCatalogsBuilder {
   catalog(&quot;libs&quot;)
-}</code></pre><p>If called multiple times with the same <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>name</a>, the subsequent call replaces earlier declarations in the backing <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalogs>catalogs</a> property and reports an informational warning.</p></div>
+}</code></pre><p>If called multiple times with the same <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String)>name</a>, the subsequent call replaces earlier declarations in the backing catalogs property and reports an informational warning.</p></div>
 
                                         <dl>
 
@@ -444,7 +415,7 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>catalog</h4>
@@ -452,7 +423,7 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                         <div class="block"><p>Registers a version catalog by <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>name</a> with an explicit <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>from</a> path or file reference.</p><p>Accepts any argument supported by Gradle file notation (<code>String</code>, <code>File</code>, <code>Path</code>, etc.). Relative paths are resolved relative to <a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>projectRoot</a>.</p><p>Example:</p><pre><code>versionCatalogsBuilder {
   catalog(&quot;tools&quot;, &quot;gradle/tools.versions.toml&quot;)
   catalog(&quot;custom&quot;, file(&quot;config/custom.versions.toml&quot;))
-}</code></pre><p>If called multiple times with the same <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>name</a>, the subsequent call replaces earlier declarations in the backing <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalogs>catalogs</a> property and reports an informational warning.</p></div>
+}</code></pre><p>If called multiple times with the same <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.String,java.lang.Object)>name</a>, the subsequent call replaces earlier declarations in the backing catalogs property and reports an informational warning.</p></div>
 
                                         <dl>
 
@@ -462,6 +433,38 @@ public class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSet
                                             
                                             <dd><code>name</code> - Name of the version catalog accessor.</dd>
                                             
+                                            
+                                            
+                                            <dd><code>from</code> - File, relative path string, or notation pointing to the TOML catalog file.</dd>
+                                            
+                                            
+                                        
+
+                                        
+
+                                        
+
+                                        </dl>
+                                    </li>
+                                </ul>
+                                
+                                <a id="catalog(java.lang.Object)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>catalog</h4>
+                                        <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a> <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.Object)>catalog</a>(<a href=https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html>Object</a> from)</pre>
+                                        <div class="block"><p>Registers a version catalog by inferring its accessor name directly from <a href=VersionCatalogsBuilderGradleSettingsExtension.html#catalog(java.lang.Object)>from</a>.</p><p>The catalog name is derived by stripping <code>.versions.toml</code> or <code>.toml</code> extensions from the file name and converting kebab-case or snake_case separators to <code>lowerCamelCase</code>.</p><p>Example:</p><pre><code>versionCatalogsBuilder {
+  catalog(&quot;gradle/network-tools.versions.toml&quot;) // registers catalog accessor &quot;networkTools&quot;
+}</code></pre></div>
+
+                                        <dl>
+
+                                        
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
                                             
                                             
                                             <dd><code>from</code> - File, relative path string, or notation pointing to the TOML catalog file.</dd>

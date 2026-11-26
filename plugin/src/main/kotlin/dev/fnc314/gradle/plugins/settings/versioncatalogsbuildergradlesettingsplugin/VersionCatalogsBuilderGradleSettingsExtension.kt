@@ -31,11 +31,10 @@ public open class VersionCatalogsBuilderGradleSettingsExtension @Inject construc
   public val projectRoot: DirectoryProperty = objects.directoryProperty()
 
   /**
-   * Managed map of registered version catalog names to their relative file paths or file notations.
-   *
-   * An empty string value `""` indicates the default catalog path (`gradle/{name}.versions.toml`).
+   * Managed map of registered version catalog names to their backing [VersionCatalogIntention].
    */
-  public val catalogs: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
+  internal val catalogs: MapProperty<String, VersionCatalogIntention> =
+    objects.mapProperty(String::class.java, VersionCatalogIntention::class.java)
 
   /**
    * Registers a version catalog by [name], defaulting to `gradle/{name}.versions.toml` relative to [projectRoot].
@@ -53,7 +52,7 @@ public open class VersionCatalogsBuilderGradleSettingsExtension @Inject construc
    * @param name Name of the version catalog accessor (e.g. `"libs"`, `"tools"`).
    */
   public fun catalog(name: String) {
-    recordCatalog(name, "")
+    recordCatalog(name, null)
   }
 
   /**
@@ -77,26 +76,44 @@ public open class VersionCatalogsBuilderGradleSettingsExtension @Inject construc
    * @param from File, relative path string, or notation pointing to the TOML catalog file.
    */
   public fun catalog(name: String, from: Any) {
-    recordCatalog(name, from.toString())
+    recordCatalog(name, from)
   }
 
-  private fun recordCatalog(name: String, path: String) {
+  /**
+   * Registers a version catalog by inferring its accessor name directly from [from].
+   *
+   * The catalog name is derived by stripping `.versions.toml` or `.toml` extensions from the file name
+   * and converting kebab-case or snake_case separators to `lowerCamelCase`.
+   *
+   * Example:
+   * ```kotlin
+   * versionCatalogsBuilder {
+   *   catalog("gradle/network-tools.versions.toml") // registers catalog accessor "networkTools"
+   * }
+   * ```
+   *
+   * @param from File, relative path string, or notation pointing to the TOML catalog file.
+   */
+  public fun catalog(from: Any) {
+    val derivedName = from.derivedCatalogName
+    recordCatalog(derivedName, from)
+  }
+
+  private fun recordCatalog(name: String, from: Any?) {
+    val root = projectRoot.get().asFile
+    val newIntention = VersionCatalogIntention(name = name, from = from, projectRoot = root)
     val existing = catalogs.getting(name).orNull
+
     if (existing != null) {
       val problemId = problems.groups.dependencies.declaration.problemId("Version catalog declaration overwritten")
       problems.reporter.report(problemId) { spec ->
-        val oldDisplay = if (existing.isEmpty()) "default location (gradle/$name.versions.toml)" else "'$existing'"
-        val newDisplay = if (path.isEmpty()) "default location (gradle/$name.versions.toml)" else "'$path'"
         spec
           .contextualLabel("Version catalog '$name' declaration was overwritten")
-          .details(
-            "Version catalog '$name' was previously configured with $oldDisplay and is now replaced by $newDisplay. " +
-              "Only the second instance will be created, which may not have been the intention."
-          )
+          .details(existing replacedBy newIntention)
           .solution("Remove duplicate catalog('$name', ...) declarations or use distinct catalog names")
       }
     }
-    catalogs.put(name, path)
+
+    catalogs.put(name, newIntention)
   }
 }
-

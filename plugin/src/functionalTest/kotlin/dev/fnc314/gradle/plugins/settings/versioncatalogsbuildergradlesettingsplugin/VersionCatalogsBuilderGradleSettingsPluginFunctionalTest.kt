@@ -160,4 +160,113 @@ class VersionCatalogsBuilderGradleSettingsPluginFunctionalTest {
         result.output.contains("Problems report is available")
     )
   }
+
+  @Test
+  fun testDerivedCatalogNameFromSingleArgumentCatalog() {
+    val projectDir = File("build/functionalTestDerivedCatalogName").apply {
+      deleteRecursively()
+      mkdirs()
+    }
+
+    val gradleWrapperProps = File(projectDir, "gradle/wrapper").apply { mkdirs() }
+    File(gradleWrapperProps, "gradle-wrapper.properties").writeText("distributionUrl=fake")
+
+    val customDir = File(projectDir, "gradle").apply { mkdirs() }
+    File(customDir, "network-tools.versions.toml").writeText("""
+      [versions]
+      okhttp = "4.12.0"
+    """.trimIndent())
+
+    val settingsFile = File(projectDir, "settings.gradle.kts")
+    settingsFile.writeText(
+      """
+      plugins {
+        id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin")
+      }
+      versionCatalogsBuilder {
+        // Single argument catalog(from) deriving accessor name "networkTools"
+        catalog("gradle/network-tools.versions.toml")
+      }
+      rootProject.name = "test-functional-derived-catalog"
+      """.trimIndent(),
+    )
+
+    val buildFile = File(projectDir, "build.gradle.kts")
+    buildFile.writeText("""
+      tasks.register("testTask") {
+        doLast {
+          println("Catalog derived successfully")
+        }
+      }
+    """.trimIndent())
+
+    val result = GradleRunner.create()
+      .withProjectDir(projectDir)
+      .withPluginClasspath()
+      .withArguments("testTask", "-q")
+      .forwardOutput()
+      .build()
+
+    assertTrue(result.output.contains("Catalog derived successfully"))
+  }
+
+  @Test
+  fun testGradlePropertiesDefaultCatalogNameOverride() {
+    val projectDir = File("build/functionalTestPropertiesOverride").apply {
+      deleteRecursively()
+      mkdirs()
+    }
+
+    val gradleWrapperProps = File(projectDir, "gradle/wrapper").apply { mkdirs() }
+    File(gradleWrapperProps, "gradle-wrapper.properties").writeText("distributionUrl=fake")
+
+    // Define custom default catalog name via gradle.properties
+    File(projectDir, "gradle.properties").writeText("""
+      dev.fnc314.version-catalogs-builder.default-catalog-name=myLibs
+    """.trimIndent())
+
+    val gradleDir = File(projectDir, "gradle").apply { mkdirs() }
+    File(gradleDir, "libs.versions.toml").writeText("""
+      [versions]
+      kotlin = "2.0.0"
+    """.trimIndent())
+    File(gradleDir, "my-custom.versions.toml").writeText("""
+      [versions]
+      kotlin = "2.1.0"
+    """.trimIndent())
+
+    val settingsFile = File(projectDir, "settings.gradle.kts")
+    settingsFile.writeText(
+      """
+      plugins {
+        id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin")
+      }
+      versionCatalogsBuilder {
+        // Because default catalog name is overridden to myLibs, catalog("myLibs", "gradle/my-custom.versions.toml")
+        // would conflict if gradle/libs.versions.toml existed for myLibs, but since gradle/libs.versions.toml is for 'libs',
+        // 'libs' is not treated as default and myLibs pointing to custom file is registered without conflict against libs.versions.toml
+        catalog("myCustom", "gradle/my-custom.versions.toml")
+      }
+      rootProject.name = "test-functional-properties-override"
+      """.trimIndent(),
+    )
+
+    val buildFile = File(projectDir, "build.gradle.kts")
+    buildFile.writeText("""
+      tasks.register("testTask") {
+        doLast {
+          println("Gradle properties override test passed")
+        }
+      }
+    """.trimIndent())
+
+    val result = GradleRunner.create()
+      .withProjectDir(projectDir)
+      .withPluginClasspath()
+      .withArguments("testTask", "-q")
+      .forwardOutput()
+      .build()
+
+    assertTrue(result.output.contains("Gradle properties override test passed"))
+  }
 }

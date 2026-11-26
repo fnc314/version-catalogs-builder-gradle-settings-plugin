@@ -2,6 +2,8 @@ package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsp
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.problems.Problems
 import java.io.File
 import javax.inject.Inject
@@ -33,27 +35,28 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
     val resolvedRoot: File = resolveRoot(settings)
     extension.projectRoot.convention(settings.layout.settingsDirectory.dir(resolvedRoot.absolutePath))
 
+    val defaultCatalogName = resolveDefaultCatalogName(settings)
+
     settings.gradle.settingsEvaluated {
-      val rootDir = extension.projectRoot.get().asFile
       val catalogMap = extension.catalogs.get()
 
       // Configure catalogs
-      for ((name, customPath) in catalogMap) {
-        val relPath = if (customPath.isNotEmpty()) customPath else "gradle/$name.versions.toml"
-        val candidate = File(relPath)
-        val catalogFile = if (candidate.isAbsolute) candidate else File(rootDir, relPath)
+      for ((name, intention) in catalogMap) {
+        val catalogFile = intention.targetFile
 
-        if (!catalogFile.exists()) continue
+        if (!catalogFile.exists()) {
+          continue
+        }
 
         val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
-        val isDefaultLibs = name == "libs" && defaultLibsFile.exists() && catalogFile.canonicalFile == defaultLibsFile.canonicalFile
+        val isDefaultLibs = name == defaultCatalogName && defaultLibsFile.exists() && catalogFile.canonicalFile == defaultLibsFile.canonicalFile
 
         if (isDefaultLibs) {
           // Case A: Default libs catalog is already automatically loaded by Gradle from settingsDir/gradle/libs.versions.toml
           continue
         }
 
-        if (name == "libs" && defaultLibsFile.exists()) {
+        if (name == defaultCatalogName && defaultLibsFile.exists()) {
           // Case B: Conflicting libs catalog registration (e.g. custom path for libs while local gradle/libs.versions.toml exists)
           val problemId = problems.groups.dependencies.declaration.problemId("Conflicting version catalog file")
           throw problems.reporter.throwing(
@@ -101,14 +104,45 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
     }
   }
 
+  private fun resolveDefaultCatalogName(settings: Settings): String {
+    // 1. Gradle property override: dev.fnc314.version-catalogs-builder.default-catalog-name
+    val extraProperties = (settings as? ExtensionAware)?.extensions?.findByType(ExtraPropertiesExtension::class.java)
+    if (extraProperties != null && extraProperties.has("dev.fnc314.version-catalogs-builder.default-catalog-name")) {
+      val propVal = extraProperties.get("dev.fnc314.version-catalogs-builder.default-catalog-name")?.toString()?.trim()
+      if (!propVal.isNullOrEmpty()) {
+        return propVal
+      }
+    }
+
+    // 2. Environment variable override: VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME
+    System.getenv("VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME")?.trim()?.takeIf { it.isNotEmpty() }?.let {
+      return it
+    }
+
+    // 3. Settings dependencyResolutionManagement.defaultLibrariesExtensionName
+    return settings.dependencyResolutionManagement.defaultLibrariesExtensionName.getOrElse("libs")
+  }
+
   private fun resolveRoot(settings: Settings): File {
-    // 1. Specific plugin root override
+    // 1. Gradle property override: dev.fnc314.version-catalogs-builder.root
+    val extraProperties = (settings as? ExtensionAware)?.extensions?.findByType(ExtraPropertiesExtension::class.java)
+    if (extraProperties != null && extraProperties.has("dev.fnc314.version-catalogs-builder.root")) {
+      val propPath = extraProperties.get("dev.fnc314.version-catalogs-builder.root")?.toString()?.trim()
+      if (!propPath.isNullOrEmpty()) {
+        val propFile = File(propPath)
+        if (propFile.exists()) {
+          return propFile
+        }
+      }
+    }
+
+    // 2. Specific plugin root environment variable override
     System.getenv("VERSION_CATALOGS_BUILDER_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
 
-    // 2. Continuous integration / monorepo workspace override
+    // 3. Continuous integration / monorepo workspace environment variable override
     System.getenv("WORKSPACE_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
 
-    // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
+    // 4. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     var current: File? = settings.settingsDir
     while (current != null) {
       if (File(current, "gradle/wrapper/gradle-wrapper.properties").exists() || File(current, ".git").exists()) {
@@ -118,7 +152,7 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
       current = parent
     }
 
-    // 4. Fallback to settings directory parent (if exists) or current directory
+    // 5. Fallback to settings directory parent (if exists) or current directory
     return current ?: settings.settingsDir
   }
 }

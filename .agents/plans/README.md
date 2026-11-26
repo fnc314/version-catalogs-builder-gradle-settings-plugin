@@ -21,4 +21,5 @@ Every architecture plan created by any agent must strictly adhere to these parad
 
 | Plan | Status | Scope / Focus Area |
 | :--- | :--- | :--- |
+| [`034320_version-catalog-intention-wrapper.md`](./2026-11-26/034320_version-catalog-intention-wrapper.md) | Completed | Encapsulate catalog declarations in VersionCatalogIntention, back extension with MapProperty<String, VersionCatalogIntention>, derive catalog names from single-argument `catalog(from)`, support gradle.properties overrides, and report overwrite comparisons via Gradle Problems API |
 | [`004500_version-catalogs-builder-3-0-0-scope-reduction.md`](./2026-11-26/004500_version-catalogs-builder-3-0-0-scope-reduction.md) | Completed | Refocus version-catalogs-builder to version catalogs only for 3.0.0: strip repo handlers, preview flags, toolBuilds; flatten API to `catalog(name)` and `catalog(name, from)`; add @DslMarker; and establish agent planning infrastructure |
