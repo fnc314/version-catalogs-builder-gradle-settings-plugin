@@ -1,9 +1,6 @@
 name: Release Artifacts & Docs
 
 on:
-  push:
-    tags:
-      - "version/*"
   workflow_dispatch:
     inputs:
       publish_plugins:

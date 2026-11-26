@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!-- NewPage -->
 <html lang="en"><head>
-    <title>VersionCatalogsBuilderGradleSettingsPlugin 2.1.0 API </title>
+    <title>VersionCatalogsBuilderGradleSettingsPlugin 3.0.0 API </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="dc.created" content="2020-03-25">
     <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -120,7 +120,7 @@ var pathtoroot = "../../../../../../";
 public final class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSettingsPlugin.html>VersionCatalogsBuilderGradleSettingsPlugin</a></span>
  implements <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/Plugin.html>Plugin</a>&lt;<a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/initialization/Settings.html>Settings</a>&gt;
                     </pre>
-                    <div class="block"><p>Settings convention plugin orchestrating workspace root discovery, repository defaults, catalog loading, and tool build inclusion.</p></div>
+                    <div class="block"><p>Settings convention plugin orchestrating workspace root discovery and version catalog registration.</p></div>
 
                     <dl>
 
@@ -325,7 +325,7 @@ public final class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGra
                                     <li class="blockList">
                                         <h4>apply</h4>
                                         <pre class="methodSignature"> <a href=https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html>Unit</a> <a href=VersionCatalogsBuilderGradleSettingsPlugin.html#apply(org.gradle.api.initialization.Settings)>apply</a>(<a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/initialization/Settings.html>Settings</a> settings)</pre>
-                                        <div class="block"><p>Applies the version catalogs builder plugin to the given <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/initialization/Settings.html>Settings</a> target.</p><p>Configures repository defaults, enables type-safe project accessors, registers the <code>versionCatalogsBuilder</code> extension, and schedules version catalog registration and tool build inclusion on settings evaluation.</p></div>
+                                        <div class="block"><p>Applies the version catalogs builder plugin to the given <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/initialization/Settings.html>Settings</a> target.</p><p>Resolves the workspace <a href=VersionCatalogsBuilderGradleSettingsExtension.html#projectRoot>VersionCatalogsBuilderGradleSettingsExtension.projectRoot</a>, creates the <code>versionCatalogsBuilder</code> extension, and schedules version catalog registration on settings evaluation.</p></div>
 
                                         <dl>
 

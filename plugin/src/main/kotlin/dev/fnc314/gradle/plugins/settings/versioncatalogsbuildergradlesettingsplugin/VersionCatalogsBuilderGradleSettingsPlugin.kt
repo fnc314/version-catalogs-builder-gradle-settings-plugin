@@ -3,18 +3,18 @@ package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsp
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import java.io.File
+import java.nio.file.Path
 
 /**
- * Settings convention plugin orchestrating workspace root discovery,
- * repository defaults, catalog loading, and tool build inclusion.
+ * Settings convention plugin orchestrating workspace root discovery and version catalog registration.
  */
 public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
   /**
    * Applies the version catalogs builder plugin to the given [Settings] target.
    *
-   * Configures repository defaults, enables type-safe project accessors,
-   * registers the `versionCatalogsBuilder` extension, and schedules version
-   * catalog registration and tool build inclusion on settings evaluation.
+   * Resolves the workspace [VersionCatalogsBuilderGradleSettingsExtension.projectRoot],
+   * creates the `versionCatalogsBuilder` extension, and schedules version catalog
+   * registration on settings evaluation.
    *
    * @param settings The Gradle [Settings] instance being configured.
    */
@@ -28,42 +28,29 @@ public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
     val resolvedRoot: File = resolveRoot(settings)
     extension.projectRoot.convention(settings.layout.settingsDirectory.dir(resolvedRoot.absolutePath))
 
-    // Enable standard features
-    settings.enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-    // Configure repository defaults for pluginManagement & dependencyResolutionManagement
-    settings.pluginManagement.repositories { handler ->
-      handler.google()
-      handler.mavenCentral()
-      handler.gradlePluginPortal()
-    }
-
-    settings.dependencyResolutionManagement.repositories { handler ->
-      handler.google()
-      handler.mavenCentral()
-    }
-
     settings.gradle.settingsEvaluated {
       val rootDir = extension.projectRoot.get().asFile
 
-      // Include tool builds
-      val toolsToInclude = if (extension.toolBuildsList.isNotEmpty()) {
-        extension.toolBuildsList
-      } else {
-        emptyList()
-      }
-
-      for (relPath in toolsToInclude) {
-        val buildDir = File(rootDir, relPath)
-        if (buildDir.exists()) {
-          settings.pluginManagement.includeBuild(buildDir.absolutePath)
-        }
-      }
-
       // Configure catalogs
       for ((name, customPath) in extension.catalogsList) {
-        val relPath = customPath ?: "gradle/$name.versions.toml"
-        val catalogFile = File(rootDir, relPath)
+        val catalogFile: File = when (customPath) {
+          null -> File(rootDir, "gradle/$name.versions.toml")
+          is File -> if (customPath.isAbsolute) customPath else File(rootDir, customPath.path)
+          is Path -> {
+            val toFile = customPath.toFile()
+            if (toFile.isAbsolute) toFile else File(rootDir, toFile.path)
+          }
+          is String -> {
+            val fileObj = File(customPath)
+            if (fileObj.isAbsolute) fileObj else File(rootDir, customPath)
+          }
+          else -> {
+            val stringNotation = customPath.toString()
+            val fileObj = File(stringNotation)
+            if (fileObj.isAbsolute) fileObj else File(rootDir, stringNotation)
+          }
+        }
+
         if (catalogFile.exists()) {
           val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
           if (name == "libs" && catalogFile.canonicalFile == defaultLibsFile.canonicalFile) {

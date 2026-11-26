@@ -3,34 +3,39 @@
 Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
 [![CI](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
-When building multi-composite or multi-repo Gradle architectures, sub-builds often need access to centralized version catalogs (`libs`, `local`, `tools`) and shared convention plugins. This plugin orchestrates:
+When designing multi-project Gradle architectures, monorepos, or isolated composite builds, sub-builds often need access to centralized version catalogs (`libs`, `tools`, `local`). 
 
-1. Automatic resolution of the monorepo / project root.
-2. Configuration of plugin and dependency resolution repositories (`google()`, `mavenCentral()`, `gradlePluginPortal()`).
-3. Loading of requested Version Catalogs into `dependencyResolutionManagement`.
-4. Inclusion of shared tool builds into `pluginManagement`.
+The `version-catalogs-builder-gradle-settings-plugin` focuses strictly on **one single responsibility**: discovering your workspace root and registering version catalogs into Gradle's `dependencyResolutionManagement`.
 
-### Adopted in Production
-This plugin is actively used in [`ai-job-tracker`](https://github.com/fnc314/ai-job-tracker) to orchestrate multi-project version catalogs and composite build tooling across its CLI, plugin ecosystem, and agent pipelines.
+It deliberately does **NOT** configure repository handlers, enable feature previews, or register included builds.
+
+### Key Capabilities
+
+1. **Automatic Root Discovery**: Discovers the workspace root by looking for `gradle/wrapper/gradle-wrapper.properties` or `.git`, with environment variable fallbacks (`VERSION_CATALOGS_BUILDER_ROOT`, `WORKSPACE_ROOT`).
+2. **Declarative Version Catalog Registration**: Register standard catalogs with a single line (`catalog("libs")`) or custom relative/explicit files (`catalog("tools", "gradle/tools.versions.toml")`).
+3. **Natural Gradle File Resolution**: Supports file notation (`String`, `File`, `Path`) passed through `Settings.file` resolution.
+4. **DSL Marker Safety**: Annotated with `@VersionCatalogsBuilderDsl` to prevent improper receiver scope leakage in Kotlin DSL settings scripts.
 
 ## Setup
 
+In your `settings.gradle.kts`:
+
 ```kotlin
-// settings.gradle.kts
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.1.0"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.0.0"
 }
 ```
 
-Or with a Version Catalog:
+Or declare it in your `settings.gradle.kts` using a version catalog:
 
 ```toml
+# gradle/libs.versions.toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.1.0" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.0.0" }
 ```
 
 ## Usage
@@ -38,34 +43,27 @@ version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-ca
 ```kotlin
 // settings.gradle.kts
 versionCatalogsBuilder {
-    // Optional override. By default, auto-resolved via:
+    // Optional workspace root override. By default, auto-resolved via:
     // 1. VERSION_CATALOGS_BUILDER_ROOT environment variable
     // 2. WORKSPACE_ROOT environment variable
     // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
-    // projectRoot.set(file("/path/to/root"))
+    // projectRoot.set(rootDir)
 
-    catalogs {
-        // Abbreviated syntax: register("name") implicitly maps to "gradle/name.versions.toml"
-        register("libs")
-        register("tools")
+    // Implicit convention: resolves to $projectRoot/gradle/libs.versions.toml
+    catalog("libs")
 
-        // Long-form syntax: register("name", "relativePath") explicitly maps to a custom relative file path
-        register("local", "gradle/local.versions.toml")
-        register("customCatalog", "config/catalogs/custom.versions.toml")
-    }
+    // Explicit relative path (resolved relative to projectRoot)
+    catalog("tools", "gradle/tools.versions.toml")
 
-    toolBuilds {
-        // Includes composite builds relative to projectRoot
-        include("gradle/tools/plugins-projects")
-        include("gradle/tools/plugins-docs")
-    }
+    // Natural file resolution notation:
+    catalog("custom", file("config/custom.versions.toml"))
 }
 ```
 
 ## Environment Variables
 
-- `VERSION_CATALOGS_BUILDER_ROOT`: Dedicated path override for standalone extraction, isolated tool builds, and custom project root targets.
-- `WORKSPACE_ROOT`: Standard continuous integration and monorepo workspace path override.
+- `VERSION_CATALOGS_BUILDER_ROOT`: Dedicated workspace root override for isolated tool builds, tests, or subprojects.
+- `WORKSPACE_ROOT`: Standard continuous integration or monorepo workspace path override.
 
 ## License
 

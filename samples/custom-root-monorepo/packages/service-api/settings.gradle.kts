@@ -1,12 +1,9 @@
 plugins {
-  id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
+  id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.0.0"
 }
 
 versionCatalogsBuilder {
-  catalogs {
-    // Discovers parent workspace root and loads gradle/libs.versions.toml
-    register("libs")
-  }
+  catalog("libs")
 }
 
 rootProject.name = "service-api"

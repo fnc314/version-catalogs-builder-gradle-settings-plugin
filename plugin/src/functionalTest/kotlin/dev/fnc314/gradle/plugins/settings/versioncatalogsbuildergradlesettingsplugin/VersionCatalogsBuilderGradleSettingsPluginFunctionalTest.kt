@@ -23,9 +23,7 @@ class VersionCatalogsBuilderGradleSettingsPluginFunctionalTest {
         id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin")
       }
       versionCatalogsBuilder {
-        catalogs {
-          register("libs")
-        }
+        catalog("libs")
       }
       rootProject.name = "test-functional-version-catalogs-builder"
       """.trimIndent(),

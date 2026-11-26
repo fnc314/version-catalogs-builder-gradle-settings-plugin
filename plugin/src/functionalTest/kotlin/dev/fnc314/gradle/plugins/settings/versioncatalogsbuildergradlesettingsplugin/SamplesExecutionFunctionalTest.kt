@@ -37,33 +37,6 @@ class SamplesExecutionFunctionalTest {
   }
 
   @Test
-  fun testCompositeToolBuildsSample() {
-    val sampleDir = File("../samples/composite-tool-builds")
-    if (!sampleDir.exists()) return
-
-    val testDir = File("build/samplesTest/composite-tool-builds").apply {
-      deleteRecursively()
-      mkdirs()
-    }
-    sampleDir.copyRecursively(testDir, overwrite = true)
-
-    val settingsFile = File(testDir, "settings.gradle.kts")
-    val content = settingsFile.readText()
-    val modified = content.replace(Regex("""id\("dev\.fnc314\.gradle\.plugins\.settings\.version-catalogs-builder-gradle-settings-plugin"\) version ".*""""), """id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin")""")
-    settingsFile.writeText(modified)
-
-    val result = GradleRunner.create()
-      .withProjectDir(testDir)
-      .withEnvironment(mapOf("VERSION_CATALOGS_BUILDER_ROOT" to testDir.absolutePath))
-      .withPluginClasspath()
-      .withArguments(":library:greeting", "--info")
-      .forwardOutput()
-      .build()
-
-    assertTrue(result.output.contains("Hello from build-logic convention plugin in :library!"))
-  }
-
-  @Test
   fun testCustomRootMonorepoSample() {
     val sampleDir = File("../samples/custom-root-monorepo")
     if (!sampleDir.exists()) return
