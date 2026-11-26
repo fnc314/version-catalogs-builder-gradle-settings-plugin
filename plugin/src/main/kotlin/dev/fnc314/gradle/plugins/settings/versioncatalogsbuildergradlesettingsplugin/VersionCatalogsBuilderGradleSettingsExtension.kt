@@ -100,8 +100,7 @@ public open class VersionCatalogsBuilderGradleSettingsExtension @Inject construc
   }
 
   private fun recordCatalog(name: String, from: Any?) {
-    val root = projectRoot.get().asFile
-    val newIntention = VersionCatalogIntention(name = name, from = from, projectRoot = root)
+    val newIntention = VersionCatalogIntention(name = name, from = from, projectRoot = projectRoot)
     val existing = catalogs.getting(name).orNull
 
     if (existing != null) {

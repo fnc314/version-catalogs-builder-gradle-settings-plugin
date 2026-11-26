@@ -1,5 +1,6 @@
 package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsplugin
 
+import org.gradle.api.file.DirectoryProperty
 import java.io.File
 import java.io.Serializable
 import java.nio.file.Path
@@ -7,29 +8,65 @@ import java.nio.file.Path
 /**
  * Encapsulates the intent to declare and register a Gradle version catalog.
  *
- * Instances eagerly resolve the target catalog [targetFile] against [projectRoot] and the catalog [name],
- * avoiding deferred evaluation errors and isolating catalog derivation logic from the public extension API surface.
+ * Holds the catalog [name], optional [from] notation, and the [projectRoot] [DirectoryProperty].
+ * Target file resolution is deferred to the [targetFile] property getter (or [resolve]), avoiding
+ * premature evaluation of [projectRoot] during extension DSL configuration.
  *
  * @property name The name of the version catalog accessor (e.g. `"libs"`, `"tools"`).
  * @property from Optional file notation, path string, or object supplied during registration.
- * @property targetFile The eagerly resolved [File] on disk pointing to the target catalog TOML file.
+ * @property projectRoot [DirectoryProperty] pointing to the workspace root directory.
  */
 internal class VersionCatalogIntention(
   val name: String,
   val from: Any? = null,
-  projectRoot: File,
+  val projectRoot: DirectoryProperty,
 ) : Serializable {
 
-  val targetFile: File = from.toResolvedFile(projectRoot, name)
+  /**
+   * Lazily resolves the target catalog [File] on disk relative to [projectRoot].
+   */
+  val targetFile: File
+    get() = resolve()
 
   /**
-   * Produces a human-readable diagnostic report describing the catalog name, input notation, and resolved target path.
+   * Resolves the target catalog [File] on disk relative to the current value of [projectRoot].
+   *
+   * @return The resolved [File] on disk.
+   */
+  fun resolve(): File {
+    val rootDir = if (projectRoot.isPresent) {
+      projectRoot.get().asFile
+    } else {
+      File(".")
+    }
+    return from.toResolvedFile(rootDir, name)
+  }
+
+  /**
+   * Produces a human-readable diagnostic report describing the catalog intention.
+   *
+   * Format:
+   * ```
+   * Catalog Intention
+   *  - name: ...
+   *  - from: ...
+   *  - projectRoot: ...
+   *  - resolved: ...
+   * ```
    *
    * @return Formatted multi-line diagnostic string.
    */
   fun report(): String {
-    val fromDisplay = from?.let { "'$it'" } ?: "default location"
-    return "VersionCatalogIntention(name='$name', from=$fromDisplay, targetFile='${targetFile.path}')"
+    val fromDisplay = from?.let { "'$it'" } ?: "default location (gradle/$name.versions.toml)"
+    val rootDisplay = if (projectRoot.isPresent) "'${projectRoot.get().asFile.path}'" else "<unspecified>"
+    val resolvedDisplay = "'${resolve().path}'"
+    return """
+      Catalog Intention
+       - name: $name
+       - from: $fromDisplay
+       - projectRoot: $rootDisplay
+       - resolved: $resolvedDisplay
+    """.trimIndent()
   }
 
   /**
@@ -46,10 +83,10 @@ internal class VersionCatalogIntention(
     return """
       Version catalog '${this.name}' was previously configured:
         - Input notation: $previousFromDisplay
-        - Target file:    '${this.targetFile.path}'
+        - Target file:    '${this.resolve().path}'
       It is now being replaced by:
         - Input notation: $newFromDisplay
-        - Target file:    '${subsequent.targetFile.path}'
+        - Target file:    '${subsequent.resolve().path}'
       Only the subsequent instance will be registered.
     """.trimIndent()
   }
