@@ -117,7 +117,7 @@ var pathtoroot = "../../../../../../";
                     <hr>
                     <pre class="wrap-overflow">
 
-public final class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSettingsPlugin.html>VersionCatalogsBuilderGradleSettingsPlugin</a></span>
+public abstract class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGradleSettingsPlugin.html>VersionCatalogsBuilderGradleSettingsPlugin</a></span>
  implements <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/Plugin.html>Plugin</a>&lt;<a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/initialization/Settings.html>Settings</a>&gt;
                     </pre>
                     <div class="block"><p>Settings convention plugin orchestrating workspace root discovery and version catalog registration.</p></div>
@@ -201,7 +201,7 @@ public final class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGra
                                         
                                             <tr class="altColor">
                                                 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
-                                                        href="#VersionCatalogsBuilderGradleSettingsPlugin()">VersionCatalogsBuilderGradleSettingsPlugin</a></span>()</code></th>
+                                                        href="#VersionCatalogsBuilderGradleSettingsPlugin(org.gradle.api.problems.Problems)">VersionCatalogsBuilderGradleSettingsPlugin</a></span>(<a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/problems/Problems.html>Problems</a> problems)</code></th>
                                                 <td class="colLast"></td>
                                             </tr>
                                         
@@ -293,12 +293,21 @@ public final class <span class="typeNameLabel"><a href=VersionCatalogsBuilderGra
                             </a>
                                 <h3>Constructor Detail</h3>
                                 
-                                <a name="VersionCatalogsBuilderGradleSettingsPlugin()"></a>
+                                <a name="VersionCatalogsBuilderGradleSettingsPlugin(org.gradle.api.problems.Problems)"></a>
                                 <ul class="blockList">
                                     <li class="blockList">
                                         <h4>VersionCatalogsBuilderGradleSettingsPlugin</h4>
-                                        <pre>VersionCatalogsBuilderGradleSettingsPlugin()</pre>
+                                        <pre>VersionCatalogsBuilderGradleSettingsPlugin(<a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/problems/Problems.html>Problems</a> problems)</pre>
                                         <div class="block"></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>problems</code> - Gradle <a href=https://docs.gradle.org/9.9.2/javadoc/org/gradle/api/problems/Problems.html>Problems</a> API service for diagnostic problem and warning reporting.</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                     </li>
                                 </ul>
