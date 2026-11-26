@@ -3,5 +3,5 @@
   gradle = "9.9.2"
 
 [env]
-  PROJECT_VERSION = "2.0.2"
+  PROJECT_VERSION = "2.0.3"
   JAVA_VERSION = "26"
