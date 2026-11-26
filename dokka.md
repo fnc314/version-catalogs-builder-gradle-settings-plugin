@@ -2,24 +2,73 @@
 
 ## About
 
-When applied to a `settings.gradle[.kts]` file, this `org.gradle.api.Plugin` orchestrates workspace root discovery, version catalog loading, and tool build inclusion.
+When applied to a `settings.gradle[.kts]` file, this `org.gradle.api.Plugin` orchestrates workspace root discovery, repository defaults, version catalog loading, and tool build inclusion for multi-project or multi-composite Gradle builds.
 
-## Usage
+## Setup
 
-See how to declare a dependency upon the plugin and consume/apply it.
+### Plugin Application
 
-### Usage - Plugin Application
+The plugin is applied in `settings.gradle[.kts]`:
 
-The plugin is applied in `settings.gradle[.kts]` files
-```gradle
+```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version("$latest_version")
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.2"
 }
 ```
 
+Or via a Version Catalog (`libs.versions.toml`):
+
+```toml
+[plugins]
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "2.0.2" }
+```
+
+```kotlin
+// settings.gradle.kts
+plugins {
+    alias(libs.plugins.version.catalogs.builder)
+}
+```
+
+## Usage
+
+Configure the plugin in `settings.gradle[.kts]` via the `versionCatalogsBuilder` block:
+
+```kotlin
+// settings.gradle.kts
+versionCatalogsBuilder {
+    // Optional override. By default, auto-resolved via:
+    // 1. GRADLE_DOCS_ROOT environment variable
+    // 2. WORKSPACE_ROOT environment variable
+    // 3. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
+    // projectRoot.set(file("/path/to/root"))
+
+    catalogs {
+        // Abbreviated syntax: register("name") implicitly maps to "gradle/name.versions.toml"
+        register("libs")
+        register("tools")
+
+        // Long-form syntax: register("name", "relativePath") explicitly maps to a custom relative file path
+        register("local", "gradle/local.versions.toml")
+        register("customCatalog", "config/catalogs/custom.versions.toml")
+    }
+
+    toolBuilds {
+        // Includes composite builds relative to projectRoot
+        include("gradle/tools/plugins-projects")
+        include("gradle/tools/plugins-docs")
+    }
+}
+```
+
+## Environment Variables
+
+- `GRADLE_DOCS_ROOT`: Primary path override for standalone extraction and documentation pipelines.
+- `WORKSPACE_ROOT`: Standard continuous integration workspace path override.
+
 ## Source
 
-The source code is available [on `GitHub`](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin).
+The source code is available on [GitHub](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin).
 
 # Package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsplugin
 
