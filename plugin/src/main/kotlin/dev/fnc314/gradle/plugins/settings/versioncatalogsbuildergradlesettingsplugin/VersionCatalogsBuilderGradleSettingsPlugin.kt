@@ -3,7 +3,6 @@ package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsp
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import java.io.File
-import java.nio.file.Path
 
 /**
  * Settings convention plugin orchestrating workspace root discovery and version catalog registration.
@@ -33,39 +32,42 @@ public class VersionCatalogsBuilderGradleSettingsPlugin : Plugin<Settings> {
 
       // Configure catalogs
       for ((name, customPath) in extension.catalogsList) {
-        val catalogFile: File = when (customPath) {
-          null -> File(rootDir, "gradle/$name.versions.toml")
-          is File -> if (customPath.isAbsolute) customPath else File(rootDir, customPath.path)
-          is Path -> {
-            val toFile = customPath.toFile()
-            if (toFile.isAbsolute) toFile else File(rootDir, toFile.path)
-          }
-          is String -> {
-            val fileObj = File(customPath)
-            if (fileObj.isAbsolute) fileObj else File(rootDir, customPath)
-          }
-          else -> {
-            val stringNotation = customPath.toString()
-            val fileObj = File(stringNotation)
-            if (fileObj.isAbsolute) fileObj else File(rootDir, stringNotation)
-          }
+        val relPath = customPath?.toString() ?: "gradle/$name.versions.toml"
+        val candidate = File(relPath)
+        val catalogFile = if (candidate.isAbsolute) candidate else File(rootDir, relPath)
+
+        if (!catalogFile.exists()) continue
+
+        val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
+        val isDefaultLibs = name == "libs" && defaultLibsFile.exists() && catalogFile.canonicalFile == defaultLibsFile.canonicalFile
+
+        if (isDefaultLibs) {
+          // Case A: Default libs catalog is already automatically loaded by Gradle from settingsDir/gradle/libs.versions.toml
+          continue
         }
 
-        if (catalogFile.exists()) {
-          val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
-          if (name == "libs" && catalogFile.canonicalFile == defaultLibsFile.canonicalFile) {
-            // Default libs catalog is already automatically loaded by Gradle from settingsDir/gradle/libs.versions.toml
-            continue
-          }
-          val fileCollection = settings.layout.settingsDirectory.files(catalogFile)
-          val existing = settings.dependencyResolutionManagement.versionCatalogs.findByName(name)
-          if (existing != null) {
-            existing.from(fileCollection)
-          } else {
-            settings.dependencyResolutionManagement.versionCatalogs.create(name) { catalog ->
-              catalog.from(fileCollection)
-            }
-          }
+        if (name == "libs" && defaultLibsFile.exists()) {
+          // Case B: Conflicting libs catalog registration (e.g. custom path for libs while local gradle/libs.versions.toml exists)
+          throw IllegalStateException(
+            "Version catalog '$name' is already registered by Gradle from '${defaultLibsFile.path}', " +
+              "which conflicts with requested catalog file '${catalogFile.path}'. " +
+              "Remove the local gradle/libs.versions.toml or use a distinct catalog name."
+          )
+        }
+
+        val existing = settings.dependencyResolutionManagement.versionCatalogs.findByName(name)
+        if (existing != null) {
+          // Case C: Duplicate registration on a custom catalog name
+          throw IllegalStateException(
+            "Version catalog '$name' is already registered, " +
+              "which conflicts with requested catalog file '${catalogFile.path}'."
+          )
+        }
+
+        // Case C: Register new catalog cleanly
+        val fileCollection = settings.layout.settingsDirectory.files(catalogFile)
+        settings.dependencyResolutionManagement.versionCatalogs.create(name) { catalog ->
+          catalog.from(fileCollection)
         }
       }
     }
