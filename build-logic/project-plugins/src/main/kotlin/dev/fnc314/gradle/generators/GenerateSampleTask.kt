@@ -15,10 +15,10 @@ import org.gradle.api.tasks.options.Option
 public abstract class GenerateSampleTask : DefaultTask() {
 
   /**
-   * Slug or name of the sample project to generate (e.g. `basic-multi-catalog`, `composite-tool-builds`, `custom-root-monorepo`).
+   * Slug or name of the sample project to generate (e.g. `basic-multi-catalog`, `multi-project-shared-catalog`, `custom-root-monorepo`).
    */
   @get:Input
-  @get:Option(option = "sampleType", description = "Sample type: basic-multi-catalog, composite-tool-builds, or custom-root-monorepo")
+  @get:Option(option = "sampleType", description = "Sample type: basic-multi-catalog, multi-project-shared-catalog, or custom-root-monorepo")
   public abstract val sampleType: Property<String>
 
   /**
@@ -28,7 +28,7 @@ public abstract class GenerateSampleTask : DefaultTask() {
   public abstract val destinationDir: DirectoryProperty
 
   /**
-   * Optional plugin version override. Defaults to 2.0.3.
+   * Optional plugin version override. Defaults to the current project version.
    */
   @get:Input
   @get:Optional
@@ -39,7 +39,6 @@ public abstract class GenerateSampleTask : DefaultTask() {
     group = "generation"
     description = "Generates a version-catalogs-builder sample project"
     sampleType.convention("basic-multi-catalog")
-    pluginVersion.convention(SampleProjectGenerator.DEFAULT_PLUGIN_VERSION)
   }
 
   @TaskAction

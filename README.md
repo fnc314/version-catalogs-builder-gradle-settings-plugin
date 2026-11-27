@@ -3,7 +3,7 @@
 Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
 [![CI](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
+[![Version](https://img.shields.io/badge/version-3.1.1-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
@@ -30,7 +30,7 @@ In your `settings.gradle.kts`:
 
 ```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.0.0"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.1"
 }
 ```
 
@@ -39,8 +39,14 @@ Or declare it in your `settings.gradle.kts` using a version catalog:
 ```toml
 # gradle/libs.versions.toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.0.0" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.1.1" }
 ```
+
+## Samples
+
+- [Multi-project shared catalog](samples/multi-project-shared-catalog): one `libs` catalog shared by `:app` and `:core`.
+- [Basic multi-catalog](samples/basic-multi-catalog): standard and custom catalogs used across subprojects.
+- [Custom-root monorepo](samples/custom-root-monorepo): nested builds discover a catalog in a shared workspace root.
 
 ## Usage
 

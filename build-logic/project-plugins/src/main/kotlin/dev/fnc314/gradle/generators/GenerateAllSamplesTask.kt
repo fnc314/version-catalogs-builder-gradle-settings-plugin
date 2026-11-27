@@ -2,6 +2,8 @@ package dev.fnc314.gradle.generators
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -16,6 +18,12 @@ public abstract class GenerateAllSamplesTask : DefaultTask() {
   @get:OutputDirectory
   public abstract val samplesDirectory: DirectoryProperty
 
+  /**
+   * Plugin version configured in each generated sample.
+   */
+  @get:Input
+  public abstract val pluginVersion: Property<String>
+
   init {
     group = "generation"
     description = "Generates all canonical sample projects in samples/"
@@ -24,10 +32,11 @@ public abstract class GenerateAllSamplesTask : DefaultTask() {
   @TaskAction
   public fun generateAll() {
     val baseDir = samplesDirectory.asFile.get()
+    val version = pluginVersion.get()
     for (sampleType in SampleType.entries) {
       val dest = java.io.File(baseDir, sampleType.slug)
-      logger.lifecycle("Generating sample '${sampleType.displayName}' in ${dest.absolutePath}...")
-      SampleProjectGenerator.generate(sampleType, dest)
+      logger.lifecycle("Generating sample '${sampleType.displayName}' in ${dest.absolutePath} (plugin version $version)...")
+      SampleProjectGenerator.generate(sampleType, dest, version)
     }
     logger.lifecycle("All samples generated successfully.")
   }

@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.fnc314.gradle.plugins.settings.versioncatalogsbuildergradlesettingsplugin
 
 import org.gradle.api.file.DirectoryProperty

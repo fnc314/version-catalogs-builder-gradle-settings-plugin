@@ -9,16 +9,20 @@ import org.gradle.kotlin.dsl.register
  */
 public class ProjectGeneratorsPlugin : Plugin<Project> {
   override fun apply(target: Project) {
+    val projectVersion = target.provider { target.version.toString() }
+
     target.tasks.register<GenerateSampleTask>("generateSample") {
       destinationDir.convention(
         target.layout.projectDirectory.dir(
           sampleType.map { "samples/$it" }
         )
       )
+      pluginVersion.convention(projectVersion)
     }
 
     target.tasks.register<GenerateAllSamplesTask>("generateAllSamples") {
       samplesDirectory.convention(target.layout.projectDirectory.dir("samples"))
+      pluginVersion.convention(projectVersion)
     }
   }
 }

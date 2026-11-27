@@ -1,11 +1,9 @@
 plugins {
-  id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "2.0.3"
+  id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.1"
 }
 
 versionCatalogsBuilder {
-  catalogs {
-    register("libs")
-  }
+  catalog("libs")
 }
 
 rootProject.name = "service-worker"

@@ -28,13 +28,15 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
    */
   override fun apply(settings: Settings) {
     val extension = settings.extensions.create(
-      "versionCatalogsBuilder",
+      VERSION_CATALOGS_BUILDER_EXTENSION_NAME,
       VersionCatalogsBuilderGradleSettingsExtension::class.java,
     )
 
     // Resolve projectRoot
     val resolvedRoot: File = resolveRoot(settings)
-    extension.projectRoot.convention(settings.layout.settingsDirectory.dir(resolvedRoot.absolutePath))
+    extension.projectRoot.convention(
+      settings.layout.settingsDirectory.dir(resolvedRoot.absolutePath)
+    )
 
     val defaultCatalogName = resolveDefaultCatalogName(settings)
 
@@ -50,7 +52,9 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
         }
 
         val defaultLibsFile = File(settings.settingsDir, "gradle/libs.versions.toml")
-        val isDefaultLibs = name == defaultCatalogName && defaultLibsFile.exists() && catalogFile.canonicalFile == defaultLibsFile.canonicalFile
+        val isDefaultLibs = name == defaultCatalogName &&
+            defaultLibsFile.exists() &&
+            catalogFile.canonicalFile == defaultLibsFile.canonicalFile
 
         if (isDefaultLibs) {
           // Case A: Default libs catalog is already automatically loaded by Gradle from settingsDir/gradle/libs.versions.toml
@@ -116,9 +120,12 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
     }
 
     // 2. Environment variable override: VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME
-    System.getenv("VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME")?.trim()?.takeIf { it.isNotEmpty() }?.let {
-      return it
-    }
+    System.getenv("VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME")
+      ?.trim()
+      ?.takeIf { it.isNotEmpty() }
+      ?.let {
+        return it
+      }
 
     // 3. Settings dependencyResolutionManagement.defaultLibrariesExtensionName
     return settings.dependencyResolutionManagement.defaultLibrariesExtensionName.getOrElse("libs")
@@ -138,10 +145,16 @@ public abstract class VersionCatalogsBuilderGradleSettingsPlugin @Inject constru
     }
 
     // 2. Specific plugin root environment variable override
-    System.getenv("VERSION_CATALOGS_BUILDER_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
+    System.getenv("VERSION_CATALOGS_BUILDER_ROOT")
+      ?.let { File(it) }
+      ?.takeIf { it.exists() }
+      ?.let { return it }
 
     // 3. Continuous integration / monorepo workspace environment variable override
-    System.getenv("WORKSPACE_ROOT")?.let { File(it) }?.takeIf { it.exists() }?.let { return it }
+    System.getenv("WORKSPACE_ROOT")
+      ?.let { File(it) }
+      ?.takeIf { it.exists() }
+      ?.let { return it }
 
     // 4. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git
     var current: File? = settings.settingsDir

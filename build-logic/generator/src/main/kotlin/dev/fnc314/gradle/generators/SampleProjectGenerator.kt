@@ -12,9 +12,9 @@ public enum class SampleType(public val slug: String, public val displayName: St
   BASIC_MULTI_CATALOG("basic-multi-catalog", "Basic Multi-Catalog Setup"),
 
   /**
-   * Sample demonstrating composite tool build inclusion via toolBuilds block.
+   * Sample demonstrating one catalog shared across projects in a multi-project build.
    */
-  COMPOSITE_TOOL_BUILDS("composite-tool-builds", "Composite Tool Builds"),
+  MULTI_PROJECT_SHARED_CATALOG("multi-project-shared-catalog", "Multi-Project Shared Catalog"),
 
   /**
    * Sample demonstrating monorepo directory layout with nested sub-builds and scoped mise environment variables.
@@ -42,11 +42,6 @@ public enum class SampleType(public val slug: String, public val displayName: St
 public object SampleProjectGenerator {
 
   /**
-   * Default version of the plugin applied in generated samples.
-   */
-  public const val DEFAULT_PLUGIN_VERSION: String = "2.0.3"
-
-  /**
    * Generates a sample project of the specified [type] inside [destinationDir].
    *
    * @param type The [SampleType] describing the architecture and features to scaffold.
@@ -56,12 +51,12 @@ public object SampleProjectGenerator {
   public fun generate(
     type: SampleType,
     destinationDir: File,
-    pluginVersion: String = DEFAULT_PLUGIN_VERSION,
+    pluginVersion: String,
   ) {
     destinationDir.mkdirs()
     when (type) {
       SampleType.BASIC_MULTI_CATALOG -> generateBasicMultiCatalog(destinationDir, pluginVersion)
-      SampleType.COMPOSITE_TOOL_BUILDS -> generateCompositeToolBuilds(destinationDir, pluginVersion)
+      SampleType.MULTI_PROJECT_SHARED_CATALOG -> generateMultiProjectSharedCatalog(destinationDir, pluginVersion)
       SampleType.CUSTOM_ROOT_MONOREPO -> generateCustomRootMonorepo(destinationDir, pluginVersion)
     }
   }
@@ -75,12 +70,10 @@ public object SampleProjectGenerator {
       }
 
       versionCatalogsBuilder {
-        catalogs {
-          // Standard catalog mapping to gradle/libs.versions.toml
-          register("libs")
-          // Custom catalog mapping to an explicit file path
-          register("tools", "gradle/tools.versions.toml")
-        }
+        // Standard catalog mapping to gradle/libs.versions.toml
+        catalog("libs")
+        // Custom catalog mapping to an explicit file path
+        catalog("tools", "gradle/tools.versions.toml")
       }
 
       rootProject.name = "sample-basic-multi-catalog"
@@ -166,8 +159,8 @@ public object SampleProjectGenerator {
       # Sample: Basic Multi-Catalog
 
       This sample demonstrates how to configure and resolve multiple version catalogs using `version-catalogs-builder-gradle-settings-plugin`:
-      - **Abbreviated syntax**: `register("libs")` resolves automatically to `gradle/libs.versions.toml`.
-      - **Explicit path syntax**: `register("tools", "gradle/tools.versions.toml")` resolves to a customized catalog file.
+      - **Convention syntax**: `catalog("libs")` resolves automatically to `gradle/libs.versions.toml`.
+      - **Explicit path syntax**: `catalog("tools", "gradle/tools.versions.toml")` resolves to a customized catalog file.
 
       ## Project Structure
 
@@ -195,8 +188,7 @@ public object SampleProjectGenerator {
     )
   }
 
-  private fun generateCompositeToolBuilds(dest: File, pluginVersion: String) {
-    // 1. Root settings.gradle.kts
+  private fun generateMultiProjectSharedCatalog(dest: File, pluginVersion: String) {
     File(dest, "settings.gradle.kts").writeText(
       """
       plugins {
@@ -204,103 +196,81 @@ public object SampleProjectGenerator {
       }
 
       versionCatalogsBuilder {
-        catalogs {
-          register("libs")
-        }
-        toolBuilds {
-          // Include custom convention plugin build
-          include("build-logic")
+        catalog("libs")
+      }
+
+      dependencyResolutionManagement {
+        repositories {
+          mavenCentral()
         }
       }
 
-      rootProject.name = "sample-composite-tool-builds"
+      rootProject.name = "sample-multi-project-shared-catalog"
 
-      include(":library")
+      include(":app", ":core")
       """.trimIndent() + "\n",
     )
 
-    // 2. Root build.gradle.kts
     File(dest, "build.gradle.kts").writeText(
       """
       plugins {
         base
       }
+
+      tasks.register("verifySharedCatalog") {
+        dependsOn(subprojects.map { it.tasks.named("help") })
+        doLast {
+          println("Both subprojects use the shared libs version catalog.")
+        }
+      }
       """.trimIndent() + "\n",
     )
 
-    // 3. Catalogs
     val gradleDir = File(dest, "gradle").apply { mkdirs() }
     File(gradleDir, "libs.versions.toml").writeText(
       """
       [versions]
-      kotlin = "2.2.0"
+      coroutines = "1.9.0"
+
+      [libraries]
+      coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
       """.trimIndent() + "\n",
     )
 
-    // 4. Included build: build-logic
-    val buildLogicDir = File(dest, "build-logic").apply { mkdirs() }
-    File(buildLogicDir, "settings.gradle.kts").writeText(
-      """
-      rootProject.name = "sample-build-logic"
-      """.trimIndent() + "\n",
-    )
-    File(buildLogicDir, "build.gradle.kts").writeText(
+    val appDir = File(dest, "app").apply { mkdirs() }
+    File(appDir, "build.gradle.kts").writeText(
       """
       plugins {
-        `kotlin-dsl`
+        `java-library`
       }
 
-      repositories {
-        mavenCentral()
-        gradlePluginPortal()
-      }
-
-      gradlePlugin {
-        plugins {
-          register("sampleConvention") {
-            id = "sample.conventions"
-            implementationClass = "sample.SampleConventionPlugin"
-          }
-        }
-      }
-      """.trimIndent() + "\n",
-    )
-    val pluginSrc = File(buildLogicDir, "src/main/kotlin/sample").apply { mkdirs() }
-    File(pluginSrc, "SampleConventionPlugin.kt").writeText(
-      """
-      package sample
-
-      import org.gradle.api.Plugin
-      import org.gradle.api.Project
-
-      class SampleConventionPlugin : Plugin<Project> {
-        override fun apply(target: Project) {
-          target.tasks.register("greeting") {
-            doLast {
-              println("Hello from build-logic convention plugin in " + target.path + "!")
-            }
-          }
-        }
+      dependencies {
+        implementation(project(":core"))
+        implementation(libs.coroutines.core)
       }
       """.trimIndent() + "\n",
     )
 
-    // 5. Consumer subproject
-    val libDir = File(dest, "library").apply { mkdirs() }
-    File(libDir, "build.gradle.kts").writeText(
+    val coreDir = File(dest, "core").apply { mkdirs() }
+    File(coreDir, "build.gradle.kts").writeText(
       """
       plugins {
-        id("sample.conventions")
+        `java-library`
+      }
+
+      dependencies {
+        implementation(libs.coroutines.core)
       }
       """.trimIndent() + "\n",
     )
 
-    // 6. README.md
     File(dest, "README.md").writeText(
       """
-      # Sample: Composite Tool Builds
+      # Sample: Multi-Project Shared Catalog
 
-      This sample demonstrates how to include composite tool builds (such as `build-logic`) using `toolBuilds { include("build-logic") }` in `version-catalogs-builder-gradle-settings-plugin`.
+      This sample demonstrates how one `libs` version catalog can be shared by multiple projects in the same Gradle build. Both `:app` and `:core` consume the `libs.coroutines.core` alias.
+
+      Maven Central is configured by the consumer build, not by the version-catalogs-builder plugin.
 
       ## Project Structure
 
@@ -309,23 +279,19 @@ public object SampleProjectGenerator {
       ├── build.gradle.kts
       ├── settings.gradle.kts
       ├── gradle/
-      │   └── libs.versions.toml    # Version catalog
-      ├── build-logic/              # Included tool build providing convention plugins
-      │   ├── build.gradle.kts
-      │   └── settings.gradle.kts
-      └── library/
-          └── build.gradle.kts      # Applies 'sample.conventions' plugin from build-logic
+      │   └── libs.versions.toml
+      ├── app/
+      │   └── build.gradle.kts
+      └── core/
+          └── build.gradle.kts
       ```
 
       ## Verifying the Build
 
-      Run the task defined by the included tool build plugin:
+      Run the following commands inside this directory:
       ```bash
-      ./gradlew :library:greeting
-      ```
-      Output:
-      ```
-      Hello from build-logic convention plugin in :library!
+      ../../gradlew verifySharedCatalog
+      ../../gradlew :app:dependencies
       ```
       """.trimIndent() + "\n",
     )
@@ -370,10 +336,8 @@ public object SampleProjectGenerator {
       }
 
       versionCatalogsBuilder {
-        catalogs {
-          // Discovers parent workspace root and loads gradle/libs.versions.toml
-          register("libs")
-        }
+        // Discovers parent workspace root and loads gradle/libs.versions.toml
+        catalog("libs")
       }
 
       rootProject.name = "service-api"
@@ -400,9 +364,7 @@ public object SampleProjectGenerator {
       }
 
       versionCatalogsBuilder {
-        catalogs {
-          register("libs")
-        }
+        catalog("libs")
       }
 
       rootProject.name = "service-worker"
