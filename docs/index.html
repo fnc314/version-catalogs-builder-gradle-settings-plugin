@@ -1,455 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Version Catalog Builder Gradle Settings Plugin</title>
-  <meta name="description" content="Convention settings plugin for multi-project Gradle builds orchestrating workspace root discovery, version catalog loading, and tool build inclusion." />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Version Catalogs Builder Gradle Settings Plugin</title>
   <style>
     :root {
-      /* Material 3 Light Theme: Primary #2f5597 */
-      --md-sys-color-primary: #2f5597;
-      --md-sys-color-on-primary: #ffffff;
-      --md-sys-color-primary-container: #d9e2ff;
-      --md-sys-color-on-primary-container: #001945;
-      --md-sys-color-secondary: #575e71;
-      --md-sys-color-on-secondary: #ffffff;
-      --md-sys-color-secondary-container: #dbe2f9;
-      --md-sys-color-on-secondary-container: #141b2c;
-      --md-sys-color-tertiary: #715573;
-      --md-sys-color-on-tertiary: #ffffff;
-      --md-sys-color-tertiary-container: #fcd7fb;
-      --md-sys-color-on-tertiary-container: #29132d;
-      --md-sys-color-background: #fbf8fd;
-      --md-sys-color-on-background: #1b1b1f;
-      --md-sys-color-surface: #ffffff;
-      --md-sys-color-on-surface: #1b1b1f;
-      --md-sys-color-surface-variant: #e1e2ec;
-      --md-sys-color-on-surface-variant: #44474f;
-      --md-sys-color-outline: #757780;
-      --md-sys-color-outline-variant: #c5c6d0;
-      --md-sys-color-surface-container: #f0edf2;
-      --md-sys-color-surface-container-high: #eae7ec;
-
-      --md-sys-font-heading: 'Inconsolata', monospace;
-      --md-sys-font-body: 'Roboto', system-ui, sans-serif;
-      --md-sys-font-code: 'Inconsolata', monospace;
-
-      --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.30);
-      --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.30);
-      --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.30);
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      --page: #fbf8fd;
+      --surface: #ffffff;
+      --text: #1b1b1f;
+      --muted: #44474f;
+      --accent: #2f5597;
+      --border: #c5c6d0;
+      --code: #f0edf2;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --md-sys-color-primary: #afc6ff;
-        --md-sys-color-on-primary: #002d6d;
-        --md-sys-color-primary-container: #104082;
-        --md-sys-color-on-primary-container: #d9e2ff;
-        --md-sys-color-secondary: #bfc6dc;
-        --md-sys-color-on-secondary: #293041;
-        --md-sys-color-secondary-container: #404659;
-        --md-sys-color-on-secondary-container: #dbe2f9;
-        --md-sys-color-background: #121316;
-        --md-sys-color-on-background: #e3e2e6;
-        --md-sys-color-surface: #1a1b1f;
-        --md-sys-color-on-surface: #e3e2e6;
-        --md-sys-color-surface-variant: #44474f;
-        --md-sys-color-on-surface-variant: #c5c6d0;
-        --md-sys-color-outline: #8f9099;
-        --md-sys-color-outline-variant: #44474f;
-        --md-sys-color-surface-container: #1e1f23;
-        --md-sys-color-surface-container-high: #292a2d;
-
-        --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-        --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-        --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+        --page: #121316;
+        --surface: #1a1b1f;
+        --text: #e3e2e6;
+        --muted: #c5c6d0;
+        --accent: #afc6ff;
+        --border: #44474f;
+        --code: #1e1f23;
       }
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: var(--md-sys-font-body);
-      background-color: var(--md-sys-color-background);
-      color: var(--md-sys-color-on-background);
-      line-height: 1.6;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-block-size: 100dvb;
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
     }
 
-    header.app-bar {
-      background-color: var(--md-sys-color-surface);
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
-      padding: 0.85rem 2rem;
+    a { color: var(--accent); }
+
+    a:focus-visible {
+      outline: 3px solid currentColor;
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      inset-block-start: 1rem;
+      inset-inline-start: 1rem;
+      transform: translateY(-200%);
+      padding: 0.5rem 0.75rem;
+      background: var(--surface);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    header {
+      border-block-end: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    nav {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--elevation-1);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--md-sys-color-primary);
-      font-family: var(--md-sys-font-heading);
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .brand .material-symbols-outlined {
-      font-size: 1.75rem;
-    }
-
-    nav.nav-links {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    nav.nav-links a {
-      color: var(--md-sys-color-on-surface-variant);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-    }
-
-    nav.nav-links a:hover {
-      background-color: var(--md-sys-color-surface-container);
-      color: var(--md-sys-color-primary);
-    }
-
-    .btn-portal {
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary) !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .btn-portal:hover {
-      background-color: var(--md-sys-color-primary-container) !important;
-      color: var(--md-sys-color-on-primary-container) !important;
-    }
-
-    main.container {
-      max-width: 1100px;
-      margin: 2.5rem auto;
-      padding: 0 1.5rem;
-      flex: 1;
-      width: 100%;
-    }
-
-    .hero-card {
-      background: linear-gradient(135deg, var(--md-sys-color-surface) 0%, var(--md-sys-color-surface-container) 100%);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      box-shadow: var(--elevation-2);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      margin-bottom: 2.5rem;
-      text-align: center;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background-color: var(--md-sys-color-primary-container);
-      color: var(--md-sys-color-on-primary-container);
-      font-family: var(--md-sys-font-heading);
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 0.35rem 0.9rem;
-      border-radius: 9999px;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-card h1 {
-      font-family: var(--md-sys-font-heading);
-      font-size: 2.4rem;
-      font-weight: 700;
-      color: var(--md-sys-color-on-surface);
-      margin-bottom: 1rem;
-      letter-spacing: -0.5px;
-    }
-
-    .hero-card p.subtitle {
-      font-size: 1.15rem;
-      color: var(--md-sys-color-on-surface-variant);
-      max-width: 760px;
-      margin: 0 auto 1.75rem auto;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
       flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
+      gap: 0.75rem 1.5rem;
+      max-inline-size: 76rem;
+      min-block-size: 4rem;
+      margin-inline: auto;
+      padding: 0.75rem 1.25rem;
     }
 
-    .btn-primary {
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      box-shadow: var(--elevation-1);
+    nav a { text-decoration: none; }
+
+    nav a:first-child {
+      margin-inline-end: auto;
+      font-weight: 700;
     }
 
-    .btn-primary:hover {
-      box-shadow: var(--elevation-2);
-      opacity: 0.95;
+    main {
+      flex: 1;
+      inline-size: min(100% - 2rem, 72ch);
+      margin-inline: auto;
+      padding-block: 2rem 4rem;
     }
 
-    .btn-secondary {
-      background-color: var(--md-sys-color-surface);
-      color: var(--md-sys-color-on-surface);
-      border: 1px solid var(--md-sys-color-outline);
-    }
+    h1, h2, h3 { line-height: 1.25; }
 
-    .btn-secondary:hover {
-      background-color: var(--md-sys-color-surface-container);
-    }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); }
 
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-    }
+    h2 { margin-block-start: 2.5rem; }
 
-    .card {
-      background-color: var(--md-sys-color-surface);
-      border-radius: 16px;
-      padding: 1.75rem;
-      box-shadow: var(--elevation-1);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+    p, ul, ol { color: var(--muted); }
 
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--elevation-2);
-    }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
 
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background-color: var(--md-sys-color-primary-container);
-      color: var(--md-sys-color-on-primary-container);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .card h2 {
-      font-family: var(--md-sys-font-heading);
-      font-size: 1.35rem;
-      margin-bottom: 0.75rem;
-      color: var(--md-sys-color-on-surface);
-    }
-
-    .card p {
-      color: var(--md-sys-color-on-surface-variant);
-      font-size: 0.95rem;
-    }
-
-    .code-section {
-      background-color: var(--md-sys-color-surface);
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: var(--elevation-1);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      margin-bottom: 2.5rem;
-    }
-
-    .code-section h2 {
-      font-family: var(--md-sys-font-heading);
-      font-size: 1.4rem;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    :not(pre) > code {
+      padding: 0.1em 0.3em;
+      border-radius: 0.25rem;
+      background: var(--code);
+      color: var(--text);
     }
 
     pre {
-      background-color: var(--md-sys-color-surface-container);
-      color: var(--md-sys-color-on-surface);
-      font-family: var(--md-sys-font-code);
-      padding: 1.25rem;
-      border-radius: 12px;
-      overflow-x: auto;
-      font-size: 0.95rem;
-      border: 1px solid var(--md-sys-color-outline-variant);
-      margin: 1rem 0 1.5rem 0;
+      max-inline-size: 100%;
+      padding: 1rem;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background: var(--code);
+      color: var(--text);
     }
 
-    code {
-      font-family: var(--md-sys-font-code);
-    }
+    img { max-inline-size: 100%; block-size: auto; }
 
     footer {
-      background-color: var(--md-sys-color-surface);
-      border-top: 1px solid var(--md-sys-color-outline-variant);
-      padding: 2rem 1.5rem;
+      padding: 1.5rem 1rem;
+      border-block-start: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
       text-align: center;
-      font-size: 0.9rem;
-      color: var(--md-sys-color-on-surface-variant);
-      margin-top: auto;
-    }
-
-    footer a {
-      color: var(--md-sys-color-primary);
-      text-decoration: none;
     }
   </style>
 </head>
-
 <body>
-  <header class="app-bar">
-    <a href="#" class="brand">
-      <span class="material-symbols-outlined">layers</span>
-      version-catalogs-builder
-    </a>
-    <nav class="nav-links">
-      <a href="#about">About</a>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header>
+    <nav aria-label="Primary">
+      <a href="#version-catalogs-builder-gradle-settings-plugin">Version Catalogs Builder</a>
       <a href="#setup">Setup</a>
       <a href="#usage">Usage</a>
-      <a href="./dokka/index.html">Dokka API</a>
-      <a href="./javadoc/index.html">Javadoc</a>
-      <a href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin" target="_blank">GitHub</a>
-      <a href="https://plugins.gradle.org/plugin/dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin" target="_blank" class="btn-portal">
-        <span class="material-symbols-outlined" style="font-size: 1.1rem;">bolt</span>
-        Plugin Portal
-      </a>
+      <a href="./dokka/index.html">API Documentation</a>
+      <a href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </header>
-
-  <main class="container">
-    <section class="hero-card">
-      <div class="hero-badge">version-catalogs-builder-gradle-settings-plugin &bull; v1.0.0</div>
-      <h1>Version Catalog Builder Orchestration</h1>
-      <p class="subtitle">
-        A Gradle convention settings plugin for multi-project, composite, and multi-repo architectures.
-        Automates workspace root discovery, catalog resolution, and tool build inclusion.
-      </p>
-      <div class="hero-actions">
-        <a href="#setup" class="btn btn-primary">
-          <span class="material-symbols-outlined">download</span>
-          Get Started
-        </a>
-        <a href="./dokka/index.html" class="btn btn-secondary">
-          <span class="material-symbols-outlined">menu_book</span>
-          API Documentation
-        </a>
-      </div>
-    </section>
-
-    <section class="feature-grid" id="about">
-      <div class="card">
-        <div class="card-icon">
-          <span class="material-symbols-outlined">explore</span>
-        </div>
-        <h2>Root Auto-Discovery</h2>
-        <p>
-          Discovers the true project/monorepo root through environment variables (<code>GRADLE_DOCS_ROOT</code>, <code>WORKSPACE_ROOT</code>) or upwards filesystem traversal for Gradle wrapper configurations.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="card-icon">
-          <span class="material-symbols-outlined">dataset</span>
-        </div>
-        <h2>Catalog Registration</h2>
-        <p>
-          Conveniently loads and registers Version Catalogs (e.g. <code>libs</code>, <code>local</code>, <code>tools</code>) into <code>dependencyResolutionManagement</code> with concise syntax.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="card-icon">
-          <span class="material-symbols-outlined">hub</span>
-        </div>
-        <h2>Tool Build Inclusion</h2>
-        <p>
-          Automatically includes convention plugins and tool builds into <code>pluginManagement</code> without brittle hardcoded relative paths.
-        </p>
-      </div>
-    </section>
-
-    <section class="code-section" id="setup">
-      <h2>
-        <span class="material-symbols-outlined">terminal</span>
-        Setup &amp; Application
-      </h2>
-      <p>Apply the plugin directly in your root or subproject <code>settings.gradle.kts</code>:</p>
-      <pre><code>// settings.gradle.kts
-plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "1.0.0"
-}</code></pre>
-
-      <p>Or declare it within your <code>gradle/libs.versions.toml</code>:</p>
-      <pre><code>[plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "1.0.0" }</code></pre>
-    </section>
-
-    <section class="code-section" id="usage">
-      <h2>
-        <span class="material-symbols-outlined">code</span>
-        DSL Configuration
-      </h2>
-      <pre><code>// settings.gradle.kts
-versionCatalogBuilder {
-    // Optional override. Defaults to auto-discovery:
-    // projectRoot.set(file("/path/to/root"))
-
-    catalogs {
-        // Abbreviated syntax: automatically maps to gradle/name.versions.toml
-        register("libs")
-        register("tools")
-
-        // Long-form syntax: custom relative path from projectRoot
-        register("local", "gradle/local.versions.toml")
-        register("customCatalog", "config/catalogs/custom.versions.toml")
-    }
-
-    toolBuilds {
-        // Includes composite builds relative to projectRoot
-        include("gradle/tools/plugins-projects")
-        include("gradle/tools/plugins-docs")
-    }
-}</code></pre>
-    </section>
+  <main id="main-content" tabindex="-1">
+<h1 id="version-catalogs-builder-gradle-settings-plugin">Version
+Catalogs Builder Gradle Settings Plugin</h1>
+<p>Convention settings plugin for multi-project Gradle builds and
+version catalog builder orchestration.</p>
+<p><a
+href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml"><img
+src="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg"
+alt="CI" /></a> <a
+href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases"><img
+src="https://img.shields.io/badge/version-3.1.2-blue.svg"
+alt="Version" /></a></p>
+<h2 id="overview">Overview</h2>
+<p>When designing multi-project Gradle architectures, monorepos, or
+isolated composite builds, sub-builds often need access to centralized
+version catalogs (<code>libs</code>, <code>tools</code>,
+<code>local</code>).</p>
+<p>The <code>version-catalogs-builder-gradle-settings-plugin</code>
+focuses strictly on <strong>one single responsibility</strong>:
+discovering your workspace root and registering version catalogs into
+Gradle's <code>dependencyResolutionManagement</code>.</p>
+<p>It deliberately does <strong>NOT</strong> configure repository
+handlers, enable feature previews, or register included builds.</p>
+<h3 id="key-capabilities">Key Capabilities</h3>
+<ol type="1">
+<li><strong>Automatic Root Discovery</strong>: Discovers the workspace
+root by looking for
+<code>gradle/wrapper/gradle-wrapper.properties</code> or
+<code>.git</code>, with <code>gradle.properties</code>
+(<code>dev.fnc314.version-catalogs-builder.root</code>) and environment
+variable fallbacks (<code>VERSION_CATALOGS_BUILDER_ROOT</code>,
+<code>WORKSPACE_ROOT</code>).</li>
+<li><strong>Declarative Version Catalog Registration</strong>:
+<ul>
+<li>Convention by name: <code>catalog("libs")</code> (defaults to
+<code>gradle/libs.versions.toml</code>).</li>
+<li>Derived name from file notation:
+<code>catalog("gradle/network-tools.versions.toml")</code>
+(automatically registers accessor <code>networkTools</code>).</li>
+<li>Explicit name and notation:
+<code>catalog("tools", "gradle/tools.versions.toml")</code>.</li>
+</ul></li>
+<li><strong>Natural Gradle File Resolution</strong>: Supports file
+notation (<code>String</code>, <code>File</code>, <code>Path</code>)
+passed through <code>Settings.file</code> resolution relative to
+<code>projectRoot</code>.</li>
+<li><strong>Configuration-Cache &amp; DSL Safety</strong>: Extension
+backed by configuration-cache-safe <code>MapProperty</code> and
+annotated with <code>@VersionCatalogsBuilderDsl</code> to prevent
+improper receiver scope leakage in Kotlin DSL settings scripts.</li>
+<li><strong>Gradle Problems API Diagnostics</strong>: Emits rich,
+multi-line problem warnings when a catalog declaration is replaced,
+comparing prior and subsequent declarations via
+<code>replacedBy</code>.</li>
+</ol>
+<h2 id="setup">Setup</h2>
+<p>In your <code>settings.gradle.kts</code>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    id<span class="op">(</span><span class="st">&quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;</span><span class="op">)</span> version <span class="st">&quot;3.1.2&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Or declare it in your <code>settings.gradle.kts</code> using a
+version catalog:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode toml"><code class="sourceCode toml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gradle/libs.versions.toml</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">[plugins]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">version-catalogs-builder</span> <span class="op">=</span> <span class="op">{ </span><span class="dt">id</span><span class="op"> =</span> <span class="st">&quot;dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin&quot;</span><span class="op">, </span><span class="dt">version</span><span class="op"> =</span> <span class="st">&quot;3.1.2&quot;</span><span class="op"> }</span></span></code></pre></div>
+<h2 id="samples">Samples</h2>
+<ul>
+<li><a
+href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/tree/main/samples/multi-project-shared-catalog">Multi-project
+shared catalog</a>: one <code>libs</code> catalog shared by
+<code>:app</code> and <code>:core</code>.</li>
+<li><a
+href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/tree/main/samples/basic-multi-catalog">Basic
+multi-catalog</a>: standard and custom catalogs used across
+subprojects.</li>
+<li><a
+href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/tree/main/samples/custom-root-monorepo">Custom-root
+monorepo</a>: nested builds discover a catalog in a shared workspace
+root.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// settings.gradle.kts</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>versionCatalogsBuilder <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Optional workspace root override. By default, auto-resolved via:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. dev.fnc314.version-catalogs-builder.root in gradle.properties</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. VERSION_CATALOGS_BUILDER_ROOT environment variable</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. WORKSPACE_ROOT environment variable</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 4. Upwards filesystem traversal for gradle/wrapper/gradle-wrapper.properties or .git</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// projectRoot.set(rootDir)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Implicit convention: resolves to $projectRoot/gradle/libs.versions.toml</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    catalog<span class="op">(</span><span class="st">&quot;libs&quot;</span><span class="op">)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Inferred name: derives catalog accessor &quot;networkTools&quot; from filename</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    catalog<span class="op">(</span><span class="st">&quot;gradle/network-tools.versions.toml&quot;</span><span class="op">)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Explicit relative path (resolved relative to projectRoot)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    catalog<span class="op">(</span><span class="st">&quot;tools&quot;</span><span class="op">,</span> <span class="st">&quot;gradle/tools.versions.toml&quot;</span><span class="op">)</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Natural file resolution notation:</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    catalog<span class="op">(</span><span class="st">&quot;custom&quot;</span><span class="op">,</span> file<span class="op">(</span><span class="st">&quot;config/custom.versions.toml&quot;</span><span class="op">))</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="configuration--overrides">Configuration &amp; Overrides</h2>
+<h3 id="gradle-properties-gradleproperties">Gradle Properties
+(<code>gradle.properties</code>)</h3>
+<ul>
+<li><code>dev.fnc314.version-catalogs-builder.root</code>: Explicit root
+path override.</li>
+<li><code>dev.fnc314.version-catalogs-builder.default-catalog-name</code>:
+Overrides default catalog name used for conflict detection with
+<code>gradle/libs.versions.toml</code> (defaults to
+<code>dependencyResolutionManagement.defaultLibrariesExtensionName</code>
+or <code>"libs"</code>).</li>
+</ul>
+<h3 id="environment-variables">Environment Variables</h3>
+<ul>
+<li><code>VERSION_CATALOGS_BUILDER_ROOT</code>: Dedicated workspace root
+override for isolated tool builds, tests, or subprojects.</li>
+<li><code>VERSION_CATALOGS_BUILDER_DEFAULT_CATALOG_NAME</code>:
+Environment variable override for the default catalog name.</li>
+<li><code>WORKSPACE_ROOT</code>: Standard continuous integration or
+monorepo workspace path override.</li>
+</ul>
+<h2 id="license">License</h2>
+<p>MIT</p>
   </main>
-
   <footer>
-    <p>&copy; 2026 Franco N. Colaizzi &bull; <a href="https://www.fnc314.dev/" target="_blank">fnc314.dev</a> &bull; Licensed under MIT</p>
+    <p>Licensed under MIT · <a href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin">View source on GitHub</a></p>
   </footer>
 </body>
-
 </html>

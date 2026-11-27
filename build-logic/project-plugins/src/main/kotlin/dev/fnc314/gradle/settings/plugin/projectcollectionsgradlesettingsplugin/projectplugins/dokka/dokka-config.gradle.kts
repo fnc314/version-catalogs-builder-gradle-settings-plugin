@@ -19,6 +19,16 @@ plugins {
 val projectVersion: String =
   libs.findVersion("project").map { it.requiredVersion }.getOrDefault("${project.version}")
 
+val dokkaOlderVersionsDirectory = layout.buildDirectory.dir("dokka/older-versions")
+val prepareDokkaOlderVersions = tasks.register<Sync>("prepareDokkaOlderVersions") {
+  group = "dokka"
+  description = "Prepares Dokka's older-version input without the current release."
+  from(dokkaDocsDirectory.dir("versioned-dokka")) {
+    exclude("$projectVersion/**")
+  }
+  into(dokkaOlderVersionsDirectory)
+}
+
 dokka {
   moduleName = project.name
   moduleVersion = projectVersion
@@ -72,6 +82,9 @@ dokka {
 
   pluginsConfiguration {
     html {
+      customStyleSheets.from(
+        layout.settingsDirectory.files("theme.css", "dokka-theme.css")
+      )
       homepageLink.value("https://www.fnc314.dev/${project.name}/")
       footerMessage.value(
         provider {
@@ -90,7 +103,7 @@ dokka {
     versioning {
       version = projectVersion
       renderVersionsNavigationOnAllPages = true
-      olderVersionsDir = dokkaDocsDirectory.dir("versioned-dokka")
+      olderVersionsDir = dokkaOlderVersionsDirectory.get()
     }
   }
 
@@ -104,6 +117,19 @@ dokka {
         layout.settingsDirectory.files("dokka.md").filter { it.exists() }
       )
     }
+  }
+}
+
+tasks.dokkaGeneratePublicationHtml.configure {
+  dependsOn(prepareDokkaOlderVersions)
+  doFirst {
+    outputDirectory.get().asFile.deleteRecursively()
+  }
+}
+tasks.dokkaGeneratePublicationJavadoc.configure {
+  dependsOn(prepareDokkaOlderVersions)
+  doFirst {
+    outputDirectory.get().asFile.deleteRecursively()
   }
 }
 

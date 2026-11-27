@@ -86,6 +86,9 @@ abstract class DokkaConfigPluginNew @Inject constructor() : Plugin<Project> {
 
       pluginsConfiguration.apply {
         register("html", DokkaHtmlPluginParameters::class.java) {
+          customStyleSheets.from(
+            target.layout.settingsDirectory.files("theme.css", "dokka-theme.css")
+          )
           homepageLink.set("https://www.fnc314.dev/${target.name}/")
           footerMessage.set(
             target.provider {

@@ -3,7 +3,7 @@
 Convention settings plugin for multi-project Gradle builds and version catalog builder orchestration.
 
 [![CI](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-3.1.1-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
+[![Version](https://img.shields.io/badge/version-3.1.2-blue.svg)](https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin/releases)
 
 ## Overview
 
@@ -30,7 +30,7 @@ In your `settings.gradle.kts`:
 
 ```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.1"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.2"
 }
 ```
 
@@ -39,7 +39,7 @@ Or declare it in your `settings.gradle.kts` using a version catalog:
 ```toml
 # gradle/libs.versions.toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.1.1" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.1.2" }
 ```
 
 ## Samples

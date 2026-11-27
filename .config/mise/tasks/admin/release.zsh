@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-#MISE description="Bump version across gradle/libs.versions.toml, gradle.properties, build-logic/gradle.properties, mise.toml, create git tag (version/X.Y.Z), and push by default"
+#MISE description="Bump version across project metadata, sample builds, and documentation, create git tag (version/X.Y.Z), and push by default"
 #MISE alias="release"
 #USAGE arg "[version]" help="Semantic version to release (e.g. 3.0.0)"
 #USAGE flag "-n --no-push" help="Skip push, creating commit and tag locally only"
@@ -18,6 +18,16 @@ TOML_FILE="gradle/libs.versions.toml"
 PROPERTIES_FILE="gradle.properties"
 BUILD_LOGIC_PROPERTIES="build-logic/gradle.properties"
 MISE_FILE="mise.toml"
+README_FILE="README.md"
+DOKKA_FILE="dokka.md"
+DOCS_INDEX="docs/index.html"
+DOCUMENTATION_FILES=("$README_FILE" "$DOKKA_FILE")
+SAMPLE_SETTINGS_FILES=(
+  "samples/basic-multi-catalog/settings.gradle.kts"
+  "samples/custom-root-monorepo/packages/service-api/settings.gradle.kts"
+  "samples/custom-root-monorepo/packages/service-worker/settings.gradle.kts"
+  "samples/multi-project-shared-catalog/settings.gradle.kts"
+)
 
 VERSION=""
 NO_PUSH=false
@@ -67,33 +77,19 @@ fi
 
 TAG_NAME="version/$VERSION"
 
-# If tag already exists locally:
+TAG_EXISTS=false
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+  TAG_EXISTS=true
   # Check if remote already has this tag
   REMOTE_TAG=$(git ls-remote --tags origin "refs/tags/$TAG_NAME" 2>/dev/null || true)
   if [[ -n "$REMOTE_TAG" ]]; then
     echo "❌ Error: Git tag '$TAG_NAME' already exists on remote origin." >&2
     exit 1
   fi
-
-  if [[ "$NO_PUSH" == true ]]; then
-    echo "ℹ️  Git tag '$TAG_NAME' already exists locally."
-    echo "Tag created locally (--no-push specified). Run without --no-push to push to remote:"
-    echo "   mise run release $VERSION"
-    exit 0
-  else
-    echo "ℹ️  Git tag '$TAG_NAME' exists locally but not on remote origin."
-    echo "Treating this invocation as the push path for '$TAG_NAME'..."
-    echo "Pushing '$BRANCH' and '$TAG_NAME' to origin..."
-    git push origin "$BRANCH"
-    git push origin "$TAG_NAME"
-    echo "✓ Pushed commit and tag to remote origin."
-    exit 0
-  fi
 fi
 
 # Ensure working tree is clean outside of version descriptor files
-UNCOMMITTED=$(git status --porcelain | grep -v "$TOML_FILE" | grep -v "$PROPERTIES_FILE" | grep -v "$BUILD_LOGIC_PROPERTIES" | grep -v "$MISE_FILE" || true)
+UNCOMMITTED=$(git status --porcelain | grep -v "$TOML_FILE" | grep -v "$PROPERTIES_FILE" | grep -v "$BUILD_LOGIC_PROPERTIES" | grep -v "$MISE_FILE" | grep -v "$README_FILE" | grep -v "$DOKKA_FILE" | grep -v "$DOCS_INDEX" | grep -v "samples/basic-multi-catalog/settings.gradle.kts" | grep -v "samples/custom-root-monorepo/packages/service-api/settings.gradle.kts" | grep -v "samples/custom-root-monorepo/packages/service-worker/settings.gradle.kts" | grep -v "samples/multi-project-shared-catalog/settings.gradle.kts" || true)
 if [[ -n "$UNCOMMITTED" ]]; then
   echo "⚠️ Warning: Working tree has uncommitted changes outside of version metadata files:" >&2
   git status -s >&2
@@ -123,9 +119,45 @@ if [[ -f "$MISE_FILE" ]]; then
   sed -i '' -E "s/^[[:space:]]*PROJECT_VERSION[[:space:]]*=[[:space:]]*\"[^\"]+\"/  PROJECT_VERSION = \"$VERSION\"/" "$MISE_FILE"
 fi
 
-git add "$TOML_FILE" "$PROPERTIES_FILE" "$BUILD_LOGIC_PROPERTIES" "$MISE_FILE"
-git commit -m "chore(release): bump version to $VERSION"
-echo "✓ Committed version $VERSION bump across project files."
+# Update sample plugin versions
+for SAMPLE_SETTINGS_FILE in "${SAMPLE_SETTINGS_FILES[@]}"; do
+  sed -i '' -E "s/(version \"[0-9]+\.[0-9]+\.[0-9]+\")$/version \"$VERSION\"/" "$SAMPLE_SETTINGS_FILE"
+done
+
+# Update documentation version badge and plugin examples
+sed -i '' -E "s/(badge\/version-)[0-9]+\.[0-9]+\.[0-9]+(-blue\.svg)/\1$VERSION\2/" "$README_FILE"
+for DOCUMENTATION_FILE in "${DOCUMENTATION_FILES[@]}"; do
+  sed -i '' -E 's/(version ")[0-9]+\.[0-9]+\.[0-9]+("$)/\1'"$VERSION"'\2/' "$DOCUMENTATION_FILE"
+  sed -i '' -E 's/(version = ")[0-9]+\.[0-9]+\.[0-9]+(")/\1'"$VERSION"'\2/' "$DOCUMENTATION_FILE"
+done
+
+# Generate the GitHub Pages landing page from the README
+mise run generate:docs
+
+git add "$TOML_FILE" "$PROPERTIES_FILE" "$BUILD_LOGIC_PROPERTIES" "$MISE_FILE" "$README_FILE" "$DOKKA_FILE" "$DOCS_INDEX" "${SAMPLE_SETTINGS_FILES[@]}"
+if ! git diff --cached --quiet; then
+  git commit -m "chore(release): bump version to $VERSION" --trailer "Co-authored-by: Junie <junie@jetbrains.com>"
+  echo "✓ Committed version $VERSION bump across project files."
+else
+  echo "✓ Version $VERSION is already synchronized across project files."
+fi
+
+if [[ "$TAG_EXISTS" == true ]]; then
+  if [[ "$NO_PUSH" == true ]]; then
+    echo "ℹ️  Git tag '$TAG_NAME' already exists locally and version metadata is synchronized."
+    echo "Run without --no-push to push the branch and tag to remote origin:"
+    echo "   mise run release $VERSION"
+    exit 0
+  fi
+
+  echo "ℹ️  Git tag '$TAG_NAME' exists locally but not on remote origin."
+  echo "Treating this invocation as the push path for '$TAG_NAME'..."
+  echo "Pushing '$BRANCH' and '$TAG_NAME' to origin..."
+  git push origin "$BRANCH"
+  git push origin "$TAG_NAME"
+  echo "✓ Pushed commit and tag to remote origin."
+  exit 0
+fi
 
 echo "🚀 Creating git tag '$TAG_NAME' on branch '$BRANCH'..."
 git tag -a "$TAG_NAME" -m "Release version $VERSION"

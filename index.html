@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
   <title>Version Catalog Builder Gradle Settings Plugin</title>
   <meta name="description" content="Convention settings plugin for multi-project Gradle builds orchestrating workspace root discovery, version catalog loading, and tool build inclusion." />
 
@@ -11,69 +12,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="theme.css">
 
   <style>
-    :root {
-      /* Material 3 Light Theme: Primary #2f5597 */
-      --md-sys-color-primary: #2f5597;
-      --md-sys-color-on-primary: #ffffff;
-      --md-sys-color-primary-container: #d9e2ff;
-      --md-sys-color-on-primary-container: #001945;
-      --md-sys-color-secondary: #575e71;
-      --md-sys-color-on-secondary: #ffffff;
-      --md-sys-color-secondary-container: #dbe2f9;
-      --md-sys-color-on-secondary-container: #141b2c;
-      --md-sys-color-tertiary: #715573;
-      --md-sys-color-on-tertiary: #ffffff;
-      --md-sys-color-tertiary-container: #fcd7fb;
-      --md-sys-color-on-tertiary-container: #29132d;
-      --md-sys-color-background: #fbf8fd;
-      --md-sys-color-on-background: #1b1b1f;
-      --md-sys-color-surface: #ffffff;
-      --md-sys-color-on-surface: #1b1b1f;
-      --md-sys-color-surface-variant: #e1e2ec;
-      --md-sys-color-on-surface-variant: #44474f;
-      --md-sys-color-outline: #757780;
-      --md-sys-color-outline-variant: #c5c6d0;
-      --md-sys-color-surface-container: #f0edf2;
-      --md-sys-color-surface-container-high: #eae7ec;
-
-      --md-sys-font-heading: 'Inconsolata', monospace;
-      --md-sys-font-body: 'Roboto', system-ui, sans-serif;
-      --md-sys-font-code: 'Inconsolata', monospace;
-
-      --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.30);
-      --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.30);
-      --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.30);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --md-sys-color-primary: #afc6ff;
-        --md-sys-color-on-primary: #002d6d;
-        --md-sys-color-primary-container: #104082;
-        --md-sys-color-on-primary-container: #d9e2ff;
-        --md-sys-color-secondary: #bfc6dc;
-        --md-sys-color-on-secondary: #293041;
-        --md-sys-color-secondary-container: #404659;
-        --md-sys-color-on-secondary-container: #dbe2f9;
-        --md-sys-color-background: #121316;
-        --md-sys-color-on-background: #e3e2e6;
-        --md-sys-color-surface: #1a1b1f;
-        --md-sys-color-on-surface: #e3e2e6;
-        --md-sys-color-surface-variant: #44474f;
-        --md-sys-color-on-surface-variant: #c5c6d0;
-        --md-sys-color-outline: #8f9099;
-        --md-sys-color-outline-variant: #44474f;
-        --md-sys-color-surface-container: #1e1f23;
-        --md-sys-color-surface-container-high: #292a2d;
-
-        --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-        --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-        --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-      }
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {

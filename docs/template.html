@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$title$</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      --page: #fbf8fd;
+      --surface: #ffffff;
+      --text: #1b1b1f;
+      --muted: #44474f;
+      --accent: #2f5597;
+      --border: #c5c6d0;
+      --code: #f0edf2;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page: #121316;
+        --surface: #1a1b1f;
+        --text: #e3e2e6;
+        --muted: #c5c6d0;
+        --accent: #afc6ff;
+        --border: #44474f;
+        --code: #1e1f23;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-block-size: 100dvb;
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    a { color: var(--accent); }
+
+    a:focus-visible {
+      outline: 3px solid currentColor;
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      inset-block-start: 1rem;
+      inset-inline-start: 1rem;
+      transform: translateY(-200%);
+      padding: 0.5rem 0.75rem;
+      background: var(--surface);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    header {
+      border-block-end: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      max-inline-size: 76rem;
+      min-block-size: 4rem;
+      margin-inline: auto;
+      padding: 0.75rem 1.25rem;
+    }
+
+    nav a { text-decoration: none; }
+
+    nav a:first-child {
+      margin-inline-end: auto;
+      font-weight: 700;
+    }
+
+    main {
+      flex: 1;
+      inline-size: min(100% - 2rem, 72ch);
+      margin-inline: auto;
+      padding-block: 2rem 4rem;
+    }
+
+    h1, h2, h3 { line-height: 1.25; }
+
+    h1 { font-size: clamp(2rem, 5vw, 3rem); }
+
+    h2 { margin-block-start: 2.5rem; }
+
+    p, ul, ol { color: var(--muted); }
+
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+    :not(pre) > code {
+      padding: 0.1em 0.3em;
+      border-radius: 0.25rem;
+      background: var(--code);
+      color: var(--text);
+    }
+
+    pre {
+      max-inline-size: 100%;
+      padding: 1rem;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background: var(--code);
+      color: var(--text);
+    }
+
+    img { max-inline-size: 100%; block-size: auto; }
+
+    footer {
+      padding: 1.5rem 1rem;
+      border-block-start: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header>
+    <nav aria-label="Primary">
+      <a href="#version-catalogs-builder-gradle-settings-plugin">Version Catalogs Builder</a>
+      <a href="#setup">Setup</a>
+      <a href="#usage">Usage</a>
+      <a href="./dokka/index.html">API Documentation</a>
+      <a href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+  <main id="main-content" tabindex="-1">
+$body$
+  </main>
+  <footer>
+    <p>Licensed under MIT · <a href="https://github.com/fnc314/version-catalogs-builder-gradle-settings-plugin">View source on GitHub</a></p>
+  </footer>
+</body>
+</html>

@@ -17,7 +17,7 @@ The plugin is applied in `settings.gradle[.kts]`:
 
 ```kotlin
 plugins {
-    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.1"
+    id("dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin") version "3.1.2"
 }
 ```
 
@@ -25,7 +25,7 @@ Or via a Version Catalog (`libs.versions.toml`):
 
 ```toml
 [plugins]
-version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.1.1" }
+version-catalogs-builder = { id = "dev.fnc314.gradle.plugins.settings.version-catalogs-builder-gradle-settings-plugin", version = "3.1.2" }
 ```
 
 ```kotlin

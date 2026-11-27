@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap");
+
+:root,
+:root.theme-dark {
+  --color-key-blue: var(--md-sys-color-primary);
+  --color-key-blue-hover: var(--md-sys-color-secondary);
+  --color-background-nav: var(--md-sys-color-surface);
+  --color-background-nav-dt: var(--md-sys-color-surface);
+  --color-background-page: var(--md-sys-color-background);
+  --color-background-page-dt: var(--md-sys-color-background);
+  --color-background-footer: var(--md-sys-color-surface);
+  --color-background-footer-dt: var(--md-sys-color-surface);
+  --color-text: var(--md-sys-color-on-surface);
+  --color-text-dt: var(--md-sys-color-on-surface);
+  --color-text-light: var(--md-sys-color-on-surface-variant);
+  --color-text-light-dt: var(--md-sys-color-on-surface-variant);
+  --color-background-code-block: var(--md-sys-color-surface-container);
+  --default-font-color: var(--md-sys-color-on-background);
+  --header-font-color: var(--md-sys-color-on-surface);
+  --hover-link-color: var(--md-sys-color-primary);
+  --color-scrollbar: var(--md-sys-color-outline);
+  --color-scrollbar-track: var(--md-sys-color-background);
+  --background-color: var(--md-sys-color-background);
+  --color-dark: var(--md-sys-color-surface);
+  --default-font-family: var(--md-sys-font-body);
+  --default-monospace-font-family: var(--md-sys-font-code);
+  --blockquote-background: var(--md-sys-color-surface-container);
+  --border-color: var(--md-sys-color-outline-variant);
+  --navigation-highlight-color: var(--md-sys-color-surface-container);
+  --active-section-color: var(--md-sys-color-primary);
+  --sidemenu-section-active-color: var(--md-sys-color-primary);
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root.theme-dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  font-family: var(--md-sys-font-body);
+}
+
+a {
+  color: var(--md-sys-color-primary);
+}
+
+#navigation-wrapper,
+#leftColumn,
+.footer {
+  background-color: var(--md-sys-color-surface);
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+#navigation-wrapper {
+  box-shadow: var(--elevation-1);
+}
+
+.library-name--link,
+h1,
+h2,
+h3,
+h4 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-font-heading);
+}
+
+#container,
+#main,
+.main-content {
+  background-color: var(--md-sys-color-background);
+}
+
+.footer {
+  border-block-start: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+code,
+pre {
+  font-family: var(--md-sys-font-code);
+}
+
+pre,
+.code-block {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 0.75rem;
+  background-color: var(--md-sys-color-surface-container);
+}

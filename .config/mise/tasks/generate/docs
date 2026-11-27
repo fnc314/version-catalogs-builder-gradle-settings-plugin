@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Generate the GitHub Pages landing page from README.md"
+
+set -euo pipefail
+
+pandoc README.md \
+  --from=gfm \
+  --to=html5 \
+  --standalone \
+  --lua-filter=docs/readme.lua \
+  --template=docs/template.html \
+  --output=docs/index.html

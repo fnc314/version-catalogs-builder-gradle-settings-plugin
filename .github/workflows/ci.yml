@@ -36,3 +36,8 @@ jobs:
 
       - name: Run Check and Tests
         run: ./gradlew check
+
+      - name: Verify generated documentation page
+        run: |
+          mise run generate:docs
+          git diff --exit-code -- docs/index.html
